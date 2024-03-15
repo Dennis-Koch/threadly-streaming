@@ -41,7 +41,7 @@ import lombok.extern.slf4j.Slf4j;
 @SuppressWarnings({ "PMD.AssignmentInOperand", "PMD.AvoidUsingVolatile", "PMD.CompareObjectsWithEquals", "PMD.DoNotUseThreads", "checkstyle:MagicNumber", "PMD.OptimizableToArrayCall" })
 @Component
 @Slf4j
-public class TransferrableThreadLocalPostProcessor implements DestructionAwareBeanPostProcessor, InitializingBean, DisposableBean, ApplicationContextAware {
+public class TransferrableThreadLocalPostProcessor implements DestructionAwareBeanPostProcessor, DisposableBean, ApplicationContextAware {
     protected final Object syncObject = new Object();
 
     protected WeakHashMap<Object, List<TransferrableThreadLocal<?>>> beanToThreadLocalsMap = new WeakHashMap<>();
