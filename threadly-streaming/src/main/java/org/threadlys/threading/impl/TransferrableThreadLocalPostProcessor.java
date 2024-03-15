@@ -15,6 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import org.springframework.context.annotation.Lazy;
 import org.threadlys.utils.ReflectUtil;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
@@ -55,6 +56,7 @@ public class TransferrableThreadLocalPostProcessor implements DestructionAwareBe
             .plus(logInterval);
 
     @Autowired
+    @Lazy
     protected ReflectUtil reflectUtil;
 
     @Autowired
