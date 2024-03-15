@@ -60,13 +60,14 @@ public class TransferrableThreadLocalPostProcessor implements DestructionAwareBe
     protected ReflectUtil reflectUtil;
 
     @Autowired
+    @Lazy
     protected TransferrableThreadLocals transferrableThreadLocals;
 
     private ApplicationContext applicationContext;
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        // required because for this 2 specific beans their are already registered (due to semantic dependency order here) so they are invisible for our post-processor logic in this class
+        // required because for these 2 specific beans are already registered (due to semantic dependency order here) so they are invisible for our post-processor logic in this class
         postProcessAfterInitialization(reflectUtil, null);
         postProcessAfterInitialization(transferrableThreadLocals, null);
     }
