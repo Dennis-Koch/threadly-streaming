@@ -33,6 +33,8 @@ import org.threadlys.threading.TransferrableThreadLocal;
 import org.threadlys.threading.TransferrableThreadLocalProvider;
 import org.threadlys.threading.TransferrableThreadLocals;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 // CHECKSTYLE: MagicNumber OFF
@@ -52,24 +54,24 @@ public class TransferrableThreadLocalPostProcessor implements DestructionAwareBe
 
     protected Duration logInterval = Duration.ofSeconds(10);
 
-    protected Instant nextLogging = Instant.now()
-            .plus(logInterval);
+    protected Instant nextLogging = Instant.now().plus(logInterval);
 
-    @Autowired
-    @Lazy
-    protected ReflectUtil reflectUtil;
+    // because we are in a post processor we "inject" our beans lazily
+    @Getter(lazy = true)
+    private final ReflectUtil reflectUtil = resolveReflectUtil();
 
-    @Autowired
-    @Lazy
-    protected TransferrableThreadLocals transferrableThreadLocals;
+    // because we are in a post processor we "inject" our beans lazily
+    @Getter(lazy = true)
+    private final TransferrableThreadLocals transferrableThreadLocals = resolveTransferrableThreadLocals();
 
     private ApplicationContext applicationContext;
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        // required because for these 2 specific beans are already registered (due to semantic dependency order here) so they are invisible for our post-processor logic in this class
-        postProcessAfterInitialization(reflectUtil, null);
-        postProcessAfterInitialization(transferrableThreadLocals, null);
+    private ReflectUtil resolveReflectUtil() {
+        return applicationContext.getBean(ReflectUtil.class);
+    }
+
+    private TransferrableThreadLocals resolveTransferrableThreadLocals() {
+        return applicationContext.getBean(TransferrableThreadLocals.class);
     }
 
     @Override
@@ -86,8 +88,7 @@ public class TransferrableThreadLocalPostProcessor implements DestructionAwareBe
             return;
         }
         AutowireCapableBeanFactory beanFactory = null;
-        var iter = threadScopeMap.entrySet()
-                .iterator();
+        var iter = threadScopeMap.entrySet().iterator();
         while (iter.hasNext()) {
             var entry = iter.next();
             var currentValue = entry.getValue();
@@ -113,8 +114,7 @@ public class TransferrableThreadLocalPostProcessor implements DestructionAwareBe
             }
             var threadLocals = threadLocalsRef != null ? threadLocalsRef.get() : null;
             if (threadLocals == null) {
-                threadLocals = threadLocalToUsageCounterMap.keySet()
-                        .toArray(new TransferrableThreadLocal<?>[threadLocalToUsageCounterMap.size()]);
+                threadLocals = threadLocalToUsageCounterMap.keySet().toArray(new TransferrableThreadLocal<?>[threadLocalToUsageCounterMap.size()]);
                 threadLocalsRef = new SoftReference<>(threadLocals);
             }
             return threadLocals;
@@ -133,9 +133,9 @@ public class TransferrableThreadLocalPostProcessor implements DestructionAwareBe
             return Collections.emptyList();
         }
         return transferrableThreadLocalList != null ? transferrableThreadLocalList.stream()//
-                .filter(Objects::nonNull)//
-                .distinct()//
-                .collect(Collectors.toList()) : null;
+                        .filter(Objects::nonNull)//
+                        .distinct()//
+                        .collect(Collectors.toList()) : null;
     }
 
     protected List<TransferrableThreadLocal<?>> resolveThreadLocals(TransferrableThreadLocalProvider bean) {
@@ -144,12 +144,14 @@ public class TransferrableThreadLocalPostProcessor implements DestructionAwareBe
             return Collections.emptyList();
         }
         return transferrableThreadLocalList.stream()//
-                .filter(Objects::nonNull)//
-                .distinct()//
-                .collect(Collectors.toList());
+                        .filter(Objects::nonNull)//
+                        .distinct()//
+                        .collect(Collectors.toList());
     }
 
     protected List<TransferrableThreadLocal<?>> resolveThreadLocalFields(Object bean) {
+        var reflectUtil = getReflectUtil();
+        var transferrableThreadLocals = getTransferrableThreadLocals();
         var fields = reflectUtil.getAllDeclaredFields(bean.getClass());
         List<TransferrableThreadLocal<?>> transferrableThreadLocalList = null;
         for (Field field : fields) {
@@ -235,8 +237,7 @@ public class TransferrableThreadLocalPostProcessor implements DestructionAwareBe
         if (log.isDebugEnabled()) {
             log.debug("Monitoring " + data[0] + " (distinct: " + data[1] + ") thread-locals provided by " + data[2] + " beans");
         }
-        nextLogging = Instant.now()
-                .plus(logInterval);
+        nextLogging = Instant.now().plus(logInterval);
     }
 
     @Override
