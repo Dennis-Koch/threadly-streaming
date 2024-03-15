@@ -26,6 +26,8 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
+    - name: prepare local clone
+      run: hooks/setup.sh && git checkout HEAD
     - name: Build with Maven
       run: mvn -B package -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
