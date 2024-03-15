@@ -150,6 +150,10 @@
 		</repository>
 	</distributionManagement>
 
+	<scm>
+		<url>https://github.com/Dennis-Koch/threadly-streaming.git</url>
+	</scm>
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
