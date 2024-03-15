@@ -51,7 +51,7 @@ import org.threadlys.threading.test.context.BeanWithThreadLocalProvider;
 import org.threadlys.threading.test.context.BeanWithThreadLocalScope;
 import org.threadlys.threading.test.context.TestService;
 import org.threadlys.threading.test.context.TestServiceImpl;
-import org.threadlys.threading.test.context.ThreadingBeanConfiguration;
+import org.threadlys.threading.test.context.ThreadingTestBeanConfiguration;
 import org.threadlys.utils.FutureUtil;
 import org.threadlys.utils.ReflectUtil;
 import lombok.SneakyThrows;
@@ -60,12 +60,12 @@ import lombok.SneakyThrows;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class)
 @TestPropertySource(properties = { "threadlys.threading.filter-active=true", "threadlys.threading.task-executor-active=true", "threadlys.threading.timeout=#{T(java.time.Duration).parse(\"PT10M\")}",
-        "threadlys.threading.gracePeriod=#{T(java.time.Duration).parse(\"PT0.5S\")}", "threadlys.threading.header-permitted=true", "threadlys.threading.transferrable-scope-active=true",
-        "threadlys.threading.worker-timeout=#{T(java.time.Duration).parse(\"PT1M\")}", "threadlys.threading.worker-timeout-check-interval=10000" })
+                "threadlys.threading.gracePeriod=#{T(java.time.Duration).parse(\"PT0.5S\")}", "threadlys.threading.header-permitted=true", "threadlys.threading.transferrable-scope-active=true",
+                "threadlys.threading.worker-timeout=#{T(java.time.Duration).parse(\"PT1M\")}", "threadlys.threading.worker-timeout-check-interval=10000" })
 public class ThreadingConfigurationTest {
     @Configuration
-    @Import({ BeanWithAsync.class, BeanWithThreadLocalField.class, BeanWithThreadLocalProvider.class, BeanWithThreadLocalScope.class, ThreadingBeanConfiguration.class,
-            CommonsThreadingAutoConfiguration.class })
+    @Import({ BeanWithAsync.class, BeanWithThreadLocalField.class, BeanWithThreadLocalProvider.class, BeanWithThreadLocalScope.class, ThreadingTestBeanConfiguration.class,
+                    CommonsThreadingAutoConfiguration.class })
     @EnableAsync
     static class ContextConfiguration {
     }
@@ -108,15 +108,14 @@ public class ThreadingConfigurationTest {
     TestInfo testInfo;
 
     @BeforeEach
-    public void beforeEach( TestInfo testInfo) {
+    public void beforeEach(TestInfo testInfo) {
         this.testInfo = testInfo;
         workerCount = 2;
         threadlyStreamingConfiguration.setPoolSize(workerCount);
         impl = new TestServiceImpl();
         BeanWithThreadLocalScope.destroyCount.set(0);
         BeanWithThreadLocalScope.customTransferCount.set(0);
-        beanWithAsync.getInvocationCount()
-                .clear();
+        beanWithAsync.getInvocationCount().clear();
     }
 
     @AfterEach
@@ -132,22 +131,15 @@ public class ThreadingConfigurationTest {
         beanWithThreadLocalProvider.lastValueTL.remove();
         beanWithThreadLocalScope.setValue(null);
         beanWithThreadLocalScope.setCustomValue(null);
-        beanWithAsync.getInvocationCount()
-                .clear();
-        scope.getThreadScopeMap()
-                .clear();
+        beanWithAsync.getInvocationCount().clear();
+        scope.getThreadScopeMap().clear();
         threadlyStreamingConfiguration.applyThreadlyStreamingConfiguration(null);
     }
 
     @Test
     public void callSetters() throws Exception {
-        ThreadingConfigurationValues values = new ThreadingConfigurationValues().setFilterActive(false)
-                .setTaskExecutorActive(false)
-                .setMaximumPoolSize(0x3FFF)
-                .setTimeout(Duration.ofMinutes(5))
-                .setGracePeriod(Duration.ofMillis(400))
-                .setWorkerTimeout(Duration.ofSeconds(45))
-                .setThreadlyStreamingHeaderPermitted(false);
+        ThreadingConfigurationValues values = new ThreadingConfigurationValues().setFilterActive(false).setTaskExecutorActive(false).setMaximumPoolSize(0x3FFF).setTimeout(Duration.ofMinutes(5))
+                        .setGracePeriod(Duration.ofMillis(400)).setWorkerTimeout(Duration.ofSeconds(45)).setThreadlyStreamingHeaderPermitted(false);
 
         // check original state
         assertThat(threadlyStreamingConfiguration.isFilterActive()).isTrue();
@@ -191,12 +183,8 @@ public class ThreadingConfigurationTest {
 
     @Test
     public void callSetterComposite() throws Exception {
-        ThreadingConfigurationValues values = new ThreadingConfigurationValues().setFilterActive(false)
-                .setTaskExecutorActive(false)
-                .setMaximumPoolSize(0x3FFF)
-                .setTimeout(Duration.ofMinutes(5))
-                .setGracePeriod(Duration.ofMillis(400))
-                .setThreadlyStreamingHeaderPermitted(false);
+        ThreadingConfigurationValues values = new ThreadingConfigurationValues().setFilterActive(false).setTaskExecutorActive(false).setMaximumPoolSize(0x3FFF).setTimeout(Duration.ofMinutes(5))
+                        .setGracePeriod(Duration.ofMillis(400)).setThreadlyStreamingHeaderPermitted(false);
 
         // check original state
         assertThat(threadlyStreamingConfiguration.isFilterActive()).isTrue();
@@ -230,13 +218,8 @@ public class ThreadingConfigurationTest {
 
     @Test
     public void callSetterDistinctThreads() throws Exception {
-        ThreadingConfigurationValues values = new ThreadingConfigurationValues().setFilterActive(false)
-                .setTaskExecutorActive(false)
-                .setMaximumPoolSize(0x3FFF)
-                .setTimeout(Duration.ofMinutes(5))
-                .setGracePeriod(Duration.ofMillis(400))
-                .setWorkerTimeout(Duration.ofSeconds(45))
-                .setThreadlyStreamingHeaderPermitted(false);
+        ThreadingConfigurationValues values = new ThreadingConfigurationValues().setFilterActive(false).setTaskExecutorActive(false).setMaximumPoolSize(0x3FFF).setTimeout(Duration.ofMinutes(5))
+                        .setGracePeriod(Duration.ofMillis(400)).setWorkerTimeout(Duration.ofSeconds(45)).setThreadlyStreamingHeaderPermitted(false);
 
         fjp = fjpGuard.createForkJoinPool();
 
@@ -292,13 +275,8 @@ public class ThreadingConfigurationTest {
 
     @Test
     public void callSetterInherited() throws Exception {
-        ThreadingConfigurationValues values = new ThreadingConfigurationValues().setFilterActive(false)
-                .setTaskExecutorActive(false)
-                .setMaximumPoolSize(0x3FFF)
-                .setTimeout(Duration.ofMinutes(5))
-                .setGracePeriod(Duration.ofMillis(400))
-                .setWorkerTimeout(Duration.ofSeconds(45))
-                .setThreadlyStreamingHeaderPermitted(false);
+        ThreadingConfigurationValues values = new ThreadingConfigurationValues().setFilterActive(false).setTaskExecutorActive(false).setMaximumPoolSize(0x3FFF).setTimeout(Duration.ofMinutes(5))
+                        .setGracePeriod(Duration.ofMillis(400)).setWorkerTimeout(Duration.ofSeconds(45)).setThreadlyStreamingHeaderPermitted(false);
 
         fjp = fjpGuard.createForkJoinPool();
 
@@ -360,8 +338,7 @@ public class ThreadingConfigurationTest {
                 assertThat(BeanWithThreadLocalScope.customTransferCount.get()).isEqualTo(2);
 
                 return null;
-            })
-                    .get();
+            }).get();
 
             assertThat(BeanWithThreadLocalScope.customTransferCount.get()).isEqualTo(2);
             assertThat(BeanWithThreadLocalScope.destroyCount.get()).isEqualTo(1);
@@ -373,8 +350,7 @@ public class ThreadingConfigurationTest {
             assertThat(BeanWithThreadLocalScope.customTransferCount.get()).isEqualTo(2);
 
             phaseCounter.incrementAndGet();
-        })
-                .run();
+        }).run();
 
         assertThat(BeanWithThreadLocalScope.customTransferCount.get()).isEqualTo(2);
         assertThat(BeanWithThreadLocalScope.destroyCount.get()).isEqualTo(2);
@@ -385,52 +361,42 @@ public class ThreadingConfigurationTest {
         assertThat(beanWithThreadLocalScope.getValue()).isEqualTo(expectedValue2);
 
         phaseCounter.set(0);
-        Arrays.asList(phaseCounter)
-                .stream()
-                .map(cs1.push())
-                .map(item -> {
-                    assertThat(BeanWithThreadLocalScope.customTransferCount.get()).isEqualTo(2);
+        Arrays.asList(phaseCounter).stream().map(cs1.push()).map(item -> {
+            assertThat(BeanWithThreadLocalScope.customTransferCount.get()).isEqualTo(2);
 
-                    assertThat(beanWithThreadLocalField.lastValueTL.get()).isEqualTo(expectedValue1);
-                    assertThat(beanWithThreadLocalProvider.lastValueTL.get()).isEqualTo(expectedValue1);
-                    assertThat(beanWithThreadLocalScope.getValue()).isEqualTo(expectedValue1);
+            assertThat(beanWithThreadLocalField.lastValueTL.get()).isEqualTo(expectedValue1);
+            assertThat(beanWithThreadLocalProvider.lastValueTL.get()).isEqualTo(expectedValue1);
+            assertThat(beanWithThreadLocalScope.getValue()).isEqualTo(expectedValue1);
 
-                    assertThat(BeanWithThreadLocalScope.customTransferCount.get()).isEqualTo(3);
+            assertThat(BeanWithThreadLocalScope.customTransferCount.get()).isEqualTo(3);
 
-                    phaseCounter.incrementAndGet();
+            phaseCounter.incrementAndGet();
 
-                    assertThat(BeanWithThreadLocalScope.destroyCount.get()).isEqualTo(2);
+            assertThat(BeanWithThreadLocalScope.destroyCount.get()).isEqualTo(2);
 
-                    Arrays.asList(item)
-                            .stream()
-                            .map(cs2.push())
-                            .map(item2 -> {
-                                assertThat(BeanWithThreadLocalScope.customTransferCount.get()).isEqualTo(3);
+            Arrays.asList(item).stream().map(cs2.push()).map(item2 -> {
+                assertThat(BeanWithThreadLocalScope.customTransferCount.get()).isEqualTo(3);
 
-                                assertThat(beanWithThreadLocalField.lastValueTL.get()).isEqualTo(expectedValue2);
-                                assertThat(beanWithThreadLocalProvider.lastValueTL.get()).isEqualTo(expectedValue2);
-                                assertThat(beanWithThreadLocalScope.getValue()).isEqualTo(expectedValue2);
+                assertThat(beanWithThreadLocalField.lastValueTL.get()).isEqualTo(expectedValue2);
+                assertThat(beanWithThreadLocalProvider.lastValueTL.get()).isEqualTo(expectedValue2);
+                assertThat(beanWithThreadLocalScope.getValue()).isEqualTo(expectedValue2);
 
-                                assertThat(BeanWithThreadLocalScope.customTransferCount.get()).isEqualTo(4);
+                assertThat(BeanWithThreadLocalScope.customTransferCount.get()).isEqualTo(4);
 
-                                phaseCounter.incrementAndGet();
-                                return null;
-                            })
-                            .map(cs2.pop())
-                            .collect(Collectors.toList());
+                phaseCounter.incrementAndGet();
+                return null;
+            }).map(cs2.pop()).collect(Collectors.toList());
 
-                    assertThat(BeanWithThreadLocalScope.customTransferCount.get()).isEqualTo(4);
-                    assertThat(BeanWithThreadLocalScope.destroyCount.get()).isEqualTo(3);
+            assertThat(BeanWithThreadLocalScope.customTransferCount.get()).isEqualTo(4);
+            assertThat(BeanWithThreadLocalScope.destroyCount.get()).isEqualTo(3);
 
-                    assertThat(beanWithThreadLocalField.lastValueTL.get()).isEqualTo(expectedValue1);
-                    assertThat(beanWithThreadLocalProvider.lastValueTL.get()).isEqualTo(expectedValue1);
-                    assertThat(beanWithThreadLocalScope.getValue()).isEqualTo(expectedValue1);
-                    phaseCounter.incrementAndGet();
+            assertThat(beanWithThreadLocalField.lastValueTL.get()).isEqualTo(expectedValue1);
+            assertThat(beanWithThreadLocalProvider.lastValueTL.get()).isEqualTo(expectedValue1);
+            assertThat(beanWithThreadLocalScope.getValue()).isEqualTo(expectedValue1);
+            phaseCounter.incrementAndGet();
 
-                    return item;
-                })
-                .map(cs1.pop())
-                .collect(Collectors.toList());
+            return item;
+        }).map(cs1.pop()).collect(Collectors.toList());
 
         assertThat(BeanWithThreadLocalScope.customTransferCount.get()).isEqualTo(4);
         assertThat(BeanWithThreadLocalScope.destroyCount.get()).isEqualTo(4);
@@ -468,7 +434,7 @@ public class ThreadingConfigurationTest {
 
     Map<String, Integer> buildTestData() {
         Map<String, Integer> invocations = new LinkedHashMap<>();
-        for (int a = workerCount * 2; a-- > 0;) {
+        for (int a = workerCount * 2; a-- > 0; ) {
             invocations.put("hello" + a, impl.testOperation("hello" + a));
         }
         assertThat(impl.invocationCount.size()).isEqualTo(1);
@@ -481,13 +447,12 @@ public class ThreadingConfigurationTest {
 
     @SuppressWarnings("unchecked")
     private <T> T createAspectAwareProxy(Class<T> type, ForkJoinPoolGuard fjpGuard, Object target) {
-        return (T) Proxy.newProxyInstance(Thread.currentThread()
-                .getContextClassLoader(), new Class[] { type }, new InvocationHandler() {
-                    @Override
-                    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                        return fjpGuard.reentrantInvokeOnForkJoinPoolWithResult(() -> reflectUtil.invokeMethod(method, target, args));
-                    }
-                });
+        return (T) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class[] { type }, new InvocationHandler() {
+            @Override
+            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                return fjpGuard.reentrantInvokeOnForkJoinPoolWithResult(() -> reflectUtil.invokeMethod(method, target, args));
+            }
+        });
     }
 
     List<?> withExecutor(int threadCount, Function<ExecutorService, Collection<Future<?>>> runnable) {

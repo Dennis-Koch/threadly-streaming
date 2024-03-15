@@ -23,16 +23,16 @@ import org.threadlys.threading.impl.TransferrableThreadLocalPostProcessor;
 import org.threadlys.threading.impl.TransferrableThreadLocalsImpl;
 
 @EnableAsync
-@Import(value = { ConcurrentProcessingFilter.class, ContextSnapshotControllerImpl.class, ForkJoinPoolGuard.class, ForkJoinPoolTaskExecutor.class, FutureUtilImpl.class, ThreadlyStreamingConfiguration.class,
-        ReflectUtilImpl.class, RequestScopedThreadlyStreamingConfiguration.class, SneakyThrowUtilImpl.class, ThreadLocalTransferrerRegistryImpl.class, TransferrableRequestContext.class,
-        TransferrableSecurityContext.class, TransferrableThreadLocalPostProcessor.class, TransferrableThreadLocalsImpl.class })
+@Import(value = { ConcurrentProcessingFilter.class, ContextSnapshotControllerImpl.class, ForkJoinPoolGuard.class, ForkJoinPoolTaskExecutor.class, FutureUtilImpl.class,
+                ThreadlyStreamingConfiguration.class, ReflectUtilImpl.class, RequestScopedThreadlyStreamingConfiguration.class, SneakyThrowUtilImpl.class, ThreadLocalTransferrerRegistryImpl.class,
+                TransferrableRequestContext.class, TransferrableSecurityContext.class, TransferrableThreadLocalPostProcessor.class, TransferrableThreadLocalsImpl.class })
 
-public class ThreadingBeanConfiguration {
+public class ThreadingTestBeanConfiguration {
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertyPlaceholderConfigurer() {
-        final Properties properties = new Properties();
+        var properties = new Properties();
 
-        final PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
+        var configurer = new PropertySourcesPlaceholderConfigurer();
         configurer.setIgnoreUnresolvablePlaceholders(true);
         configurer.setLocalOverride(true);
         configurer.setProperties(properties);

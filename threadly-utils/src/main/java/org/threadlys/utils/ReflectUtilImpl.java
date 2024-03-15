@@ -28,9 +28,6 @@ public class ReflectUtilImpl implements ReflectUtil {
 
     private final ConcurrentHashMap<String, Set<String>> classNameToInaccessibleFieldMap = new ConcurrentHashMap<>();
 
-    @Autowired
-    private SneakyThrowUtil sneakyThrowUtil;
-
     @Override
     public Field[] getAllDeclaredFields(Class<?> type) {
         if (type == null) {
@@ -90,14 +87,13 @@ public class ReflectUtilImpl implements ReflectUtil {
         field.set(obj, value);
     }
 
+    @SneakyThrows
     @Override
     public Object invokeMethod(Method method, Object target, Object[] args) {
         try {
             return method.invoke(target, args);
         } catch (InvocationTargetException e) {
-            throw sneakyThrowUtil.sneakyThrow(e.getCause());
-        } catch (Exception e) {
-            throw sneakyThrowUtil.sneakyThrow(e);
+            throw e.getCause();
         }
     }
 }
