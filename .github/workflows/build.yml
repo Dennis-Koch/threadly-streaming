@@ -27,7 +27,7 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: prepare local clone
-      run: cp hooks/post-checkout .git/hooks/ && git checkout HEAD
+      run: cp hooks/post-checkout .git/hooks/ && chmod +x .git/hooks/post-checkout && git checkout HEAD
     - name: Build with Maven
       run: mvn -B package -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
