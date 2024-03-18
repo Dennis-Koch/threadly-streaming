@@ -1,0 +1,22 @@
+#!/bin/bash
+
+set -e
+
+prevHEAD=$1
+newHEAD=$2
+checkoutType=$3
+thisBranchName=$(git rev-parse --abbrev-ref HEAD);
+
+if [[ ! "$thisBranchName" =~ ^master$|^develop$|^main$|^.+/master$|^.+/develop$|^.+/main$ ]]; 
+then 
+  versionSnippet="${thisBranchName//\//-}"
+  versionSnippet="${versionSnippet//_/-}"
+  mvnVersionSuffix=-$versionSnippet-SNAPSHOT
+  mvnChangelist=-Dchangelist=$mvnVersionSuffix
+  echo "adjusted mvn version suffix: $mvnVersionSuffix"
+else
+  mvnChangelist=
+  echo "cleared mvn version suffix"
+fi
+mkdir -p .mvn
+echo $mvnChangelist > .mvn/maven.config
