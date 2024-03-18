@@ -5,9 +5,14 @@ revertable". So it is about applying the [Stack pattern](https://en.wikipedia.or
 your state transition in a reentrant manner. So you can chain revertable state transitions of any complexity globally or
 thread-local to your current thread.
 
+# Key features of this library
+## 1) [Chain-Revert API](#chain-revert-api)
+## 2) [Bullet-proof Java Parallel-Streaming API](#parallel-streaming-api)
+
+---
 A very simple example might look like this:
 
-### try 1: Without threadly-streaming
+###  <a name="chain-revert-api"></a>try 1: Without threadly-streaming
 
 ```java
 setFooState(argument);
@@ -139,3 +144,8 @@ time. Note the subtle difference above: In our nested try/finally we call `condi
 is false we have allocated the `oldFooState` on our stack unnecessarily. If the fooState creation itself was a
 non-trivial task we have initialized a complex object on our stack without any good reason. This is also solved with the
 _Chain-API_ from _threadly-streaming_.
+
+---
+###  <a name="parallel-streaming-api"></a>Parallel Streaming API
+
+TODO
