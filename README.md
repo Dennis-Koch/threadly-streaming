@@ -80,6 +80,8 @@ would not apply and we have an uncaught exception leaving a dirty fooState to ou
 with flaw No.1. Of course we could adhoc fix this by moving the `setBarState()` invocation into the try section to solve
 our "transactional" problem. An ugly - but admitted truly robust - solution would then look like this: 
 
+### try 3: Without threadly-streaming, but without flaw No.1, No.2 & No.3
+
 ```java
 var oldFooState = getFooState();
 if (conditionIsSatisfied) {
@@ -130,3 +132,10 @@ foo & bar from the very initial state.
 
 It is also reentrant-capable due to the stack nature with _push*_ instead of _set*_ and due to the fact that we store
 the revert-closure (the result from the `chain()` invocation) on the thread stack it is immutable & thread-safe as well.
+
+This logic is even more robust than even the best common example from above because it will only memorize & apply the
+revert logic for the `fooState` if the `conditionIsSatisfied` was condition was really applicable at a single point in
+time. Note the subtle difference above: In our nested try/finally we call `conditionIsSatisfied` 2 times and even if it
+is false we have allocated the `oldFooState` on our stack unnecessarily. If the fooState creation itself was a
+non-trivial task we have initialized a complex object on our stack without any good reason. This is also solved with the
+_Chain-API_ from _threadly-streaming_.
