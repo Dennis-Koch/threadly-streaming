@@ -43,6 +43,9 @@ jobs:
       env:
         MAVEN_USERNAME: Dennis-Koch
         MAVEN_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+         SIGN_KEY_ID: ${{ secrets.MVN_SIGN_KEY_ID }}
+        SIGN_KEY: ${{ secrets.MVN_SIGN_KEY }}
+        SIGN_KEY_PASS: ${{ secrets.MVN_SIGN_KEY_PASS }}
       run: mvn -B deploy
     # -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
     #- name: Update dependency graph
