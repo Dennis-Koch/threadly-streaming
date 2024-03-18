@@ -1,18 +1,19 @@
 # threadly-streaming
 
+## Key features of this library
+### 1) [Chain-Revert API](#chain-revert-api)
+### 2) [Bullet-proof Java Parallel-Streaming API](#parallel-streaming-api)
+
+---
+A very simple example might look like this:
+
+#  <a name="chain-revert-api"></a>Chain-Revert API
 This library is intended to help in usecases where you have a state transition in your system that you want to make "
 revertable". So it is about applying the [Stack pattern](https://en.wikipedia.org/wiki/Stack_(abstract_data_type)) to
 your state transition in a reentrant manner. So you can chain revertable state transitions of any complexity globally or
 thread-local to your current thread.
 
-# Key features of this library
-## 1) [Chain-Revert API](#chain-revert-api)
-## 2) [Bullet-proof Java Parallel-Streaming API](#parallel-streaming-api)
-
----
-A very simple example might look like this:
-
-###  <a name="chain-revert-api"></a>try 1: Without threadly-streaming
+### try 1: Without threadly-streaming
 
 ```java
 setFooState(argument);
@@ -146,6 +147,6 @@ non-trivial task we have initialized a complex object on our stack without any g
 _Chain-API_ from _threadly-streaming_.
 
 ---
-###  <a name="parallel-streaming-api"></a>Parallel Streaming API
+#  <a name="parallel-streaming-api"></a>Parallel Streaming API
 
 TODO
