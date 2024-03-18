@@ -52,7 +52,7 @@ run_logic_that_works_with_state_of_foo()       // fooValue1 is used in the logic
    > run_logic_that_works_with_state_of_foo()  // fooValue2 is used in the logic
    > clearFooState()                           // no we clear fooValue2 from the foo state. it is now null, but not fooValue1 like before
 ...  !!                                        // at this moment - we are still somewhere within the initial call to run_logic - we have lost our fooValue1 state!
-clearFooState()                                // no we think we clear fooValue1 from the foo state. but it was already null
+clearFooState()                                // now we think we clear fooValue1 from the foo state. but it was already null
 ```
 
 But of course we can fix this, right? We have solved problems of this kind already a lot and we are all experts in
@@ -108,9 +108,10 @@ try {
 }
 ```
 
-In real case scenarios it sometimes because even more complex than this. Normally the solution is either to drop the
-requirement of bullet-proof code altogether and simply accept the "negligible" risk that unexpected things might happen.
-Or you live with the fact that your whole codebase is cluttered with nested try/finally statements all over the place.
+In real case scenarios it often becomes even more complex than in our example above. Normally the solution is either to
+drop the requirement of bullet-proof code altogether and simply accept the "negligible" risk that unexpected things
+might happen. Or you live with the fact that your whole codebase is cluttered with nested try/finally statements all
+over the place.
 
 **Or you use _threadly-streaming_ that gives you all the robustness from the code before - without the clutter**:
 
@@ -128,24 +129,28 @@ try{
 }
 ```
 
-Note that we also changed the semantics of the encapsulated state transitions. Our helper methods are not called
-`pushFooState()` instead of `setFooState()` etc.
+- We also changed the semantics of the encapsulated state transitions. Our helper methods are not called
+`setFooState()` anymore but rather `pushFooState()`. Same for the barState.
 
-Note the code example above is 100% transactionally consistent. If an error or exception of any kind happens during the
+- The code example above is 100% transactionally consistent. If an error or exception of any kind happens during the
 execution of `pushFooState()`, `pushBarState()` or the normal business logic in
 `run_logic_that_works_with_state_of_foo_and_bar()` the overall termination and cleanup logic will recover to the state
 of foo & bar from the very initial state. Even the partial creation of the lamda structure within the `chain()` method
 is properly reverted behind the scenes.
 
-It is also reentrant-capable due to the stack nature with _push*_ instead of _set*_ and due to the fact that we store
+- It is also reentrant-capable due to the stack nature with _push*_ instead of _set*_ and due to the fact that we store
 the revert-closure (the result from the `chain()` invocation) on the thread stack it is immutable & thread-safe as well.
 
-This logic is even more robust than even the best common example from above because it will only memorize & apply the
+- In fact the managed logic is even more robust than even the best common example from above because it will only memorize & apply the
 revert logic for the `fooState` if the `conditionIsSatisfied` was condition was really applicable at a single point in
-time. Note the subtle difference above: In our nested try/finally we call `conditionIsSatisfied` 2 times and even if it
-is false we have allocated the `oldFooState` on our stack unnecessarily. If the fooState creation itself was a
-non-trivial task we have initialized a complex object on our stack without any good reason. This is also solved with the
-_Chain-API_ from _threadly-streaming_.
+time
+
+- Note the subtle difference in our nested try/finally above we call `conditionIsSatisfied` 2 times and even if it
+resolves to _false_ we have allocated the `oldFooState` on our stack unnecessarily. If the fooState creation itself was a
+non-trivial or lazy task we have initialized a complex object on our stack without any good reason. But this is also
+solved with the _Chain-API_ from _threadly-streaming_.
+
+Try it out!
 
 ---
 #  <a name="parallel-streaming-api"></a>Parallel Streaming API
