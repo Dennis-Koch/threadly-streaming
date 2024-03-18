@@ -142,7 +142,7 @@ is properly reverted behind the scenes.
 the revert-closure (the result from the `chain()` invocation) on the thread stack it is immutable & thread-safe as well.
 
 - In fact the managed logic is even more robust than even the best common example from above because it will only memorize & apply the
-revert logic for the `fooState` if the `conditionIsSatisfied` was condition was really applicable at a single point in
+revert logic for the `fooState` if the `conditionIsSatisfied` condition was really applicable at a single point in
 time
 
 - Note the subtle difference in our nested try/finally above we call `conditionIsSatisfied` 2 times and even if it
