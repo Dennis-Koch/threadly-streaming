@@ -16,7 +16,7 @@ thread-local to your current thread.
 ### try 1: Without threadly-streaming
 
 ```java
-setFooState(argument);
+setFooState(fooValue1);
 run_logic_that_works_with_state_of_foo();
 clearFooState();
 ```
@@ -29,7 +29,7 @@ thread in successor tasks
 
 So lets try a better version - still without dedicated library support...
 
-### try 2: Without threadly-streaming, but without flaw No.1
+### try 2: Without threadly-streaming, but without flaw #1
 
 ```java
 setFooState(fooValue1);
@@ -59,7 +59,7 @@ But of course we can fix this, right? We have solved problems of this kind alrea
 problem solving. To make it more interesting we now introduce also a 2nd state that we want to make revertable in
 addition to our foo state. And we make it so that the fooState is applied conditionally...
 
-### try 3: Without threadly-streaming, but also without flaw No.1 & No.2
+### try 3: Without threadly-streaming, but also without flaw #1 & #2
 
 ```java
 var oldFooState = getFooState();
@@ -86,7 +86,7 @@ would not apply and we have an uncaught exception leaving a dirty fooState to ou
 with flaw No.1. Of course we could adhoc fix this by moving the `setBarState()` invocation into the try section to solve
 our "transactional" problem. An ugly - but admitted truly robust - solution would then look like this: 
 
-### try 3: Without threadly-streaming, but without flaw No.1, No.2 & No.3
+### try 3: Without threadly-streaming, but also without flaw #1, #2 & #3
 
 ```java
 var oldFooState = getFooState();
@@ -133,8 +133,9 @@ Note that we also changed the semantics of the encapsulated state transitions. O
 
 Note the code example above is 100% transactionally consistent. If an error or exception of any kind happens during the
 execution of `pushFooState()`, `pushBarState()` or the normal business logic in
-`run_logic_that_works_with_state_of_foo_and_bar()` the overall termination and cleanup logic will recover the state of
-foo & bar from the very initial state.
+`run_logic_that_works_with_state_of_foo_and_bar()` the overall termination and cleanup logic will recover to the state
+of foo & bar from the very initial state. Even the partial creation of the lamda structure within the `chain()` method
+is properly reverted behind the scenes.
 
 It is also reentrant-capable due to the stack nature with _push*_ instead of _set*_ and due to the fact that we store
 the revert-closure (the result from the `chain()` invocation) on the thread stack it is immutable & thread-safe as well.
