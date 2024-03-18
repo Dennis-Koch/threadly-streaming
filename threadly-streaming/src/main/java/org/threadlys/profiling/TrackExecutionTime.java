@@ -1,6 +1,3 @@
-/*+***********************************************************************
-    Copyright (c) 2021 Daimler Corporation. All rights reserved.
- **************************************************************************/
 package org.threadlys.profiling;
 
 import java.lang.annotation.ElementType;
