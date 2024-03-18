@@ -108,6 +108,9 @@
 		<directory.groupId>${project.groupId}</directory.groupId>
 		<directory.artifactId>${project.artifactId}</directory.artifactId>
 
+		<!-- sign settings -->
+		<sign.skipNoKey>true</sign.skipNoKey>
+
 		<!-- PMD settings -->
 		<pmd.failOnViolation>true</pmd.failOnViolation>
 		<pmd.failurePriority>3</pmd.failurePriority>
@@ -430,6 +433,9 @@
 							<goals>
 								<goal>sign</goal>
 							</goals>
+							<configuration>
+								<skipNoKey>${sign.skipNoKey}</skipNoKey>
+							</configuration>
 						</execution>
 					</executions>
 				</plugin>
