@@ -40,8 +40,8 @@ try {
 }
 ```
 
-**This approach still has a major robustness issues:** It is not reentrant - This means that multiple execution of the same
-method body by the same thread may corrupt the thread-local state.
+**This approach still has a major robustness issues:** It is not reentrant - This means that multiple executions of the
+same method body by the same thread may corrupt the underlying thread-local state!
 
 Imagine the following sequence
 
