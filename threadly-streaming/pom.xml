@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>threadly-streaming</artifactId>
 
 	<parent>
-		<groupId>com.koch.threadly</groupId>
+		<groupId>org.threadlystreaming</groupId>
 		<artifactId>threadly-streaming-pom</artifactId>
-		<version>${revision}${changelist}</version>
+		<version>0.0.0-SNAPSHOT</version>
 	</parent>
 
-	<properties>
-		<revision>1.0.0</revision>
-	</properties>
+	<artifactId>threadly-streaming</artifactId>
 
 	<dependencies>
 		<dependency>
