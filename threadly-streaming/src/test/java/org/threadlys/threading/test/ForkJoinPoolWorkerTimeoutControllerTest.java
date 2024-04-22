@@ -81,6 +81,9 @@ public class ForkJoinPoolWorkerTimeoutControllerTest {
 
         assertThrows(InterruptedException.class, () -> awaitSuccess(60, TimeUnit.SECONDS, finish, ex));
 
+        // wait for threads to terminate after interrupt
+        Thread.sleep(500);
+
         assertThat(ex.get()).isExactlyInstanceOf(InterruptedException.class);
 
         assertThat(fjp.resolveBusyThreads()).isEmpty();
