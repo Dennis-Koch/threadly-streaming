@@ -1,0 +1,21 @@
+<configuration xmlns="https://github.com/qoomon/maven-git-versioning-extension"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="https://github.com/qoomon/maven-git-versioning-extension https://qoomon.github.io/maven-git-versioning-extension/configuration-7.0.0.xsd">
+
+    <disable>false</disable>
+    <refs considerTagsOnBranches="true">
+        <ref type="tag">
+            <describeTagPattern>(.+)</describeTagPattern>
+            <version>${describe.tag.version}${dirty}${dirty.snapshot}</version>
+        </ref>
+
+        <ref type="branch">
+            <describeTagPattern>(.+)</describeTagPattern>
+            <version>${describe.tag.version.major}.${describe.tag.version.minor}.${describe.tag.version.patch.next}-${ref.slug}-SNAPSHOT</version>
+        </ref>
+    </refs>
+
+    <rev>
+        <version>${commit}</version>
+    </rev>
+</configuration>

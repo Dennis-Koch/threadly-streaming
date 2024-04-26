@@ -1,0 +1,54 @@
+# ℹ️ The main workflow used to automatically build your application, run tests,
+# execute static analysis on your code and deploy it to Nexus if all steps
+# succeed.
+#
+# This workflow is triggered on every push and every pull request opened to
+# your repository.
+#
+#
+name: Build
+
+on:
+  push:
+    branches:
+      - '**'
+    tags:
+      - 'v*.*.*'
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      packages: write
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+        server-id: github
+        server-username: MAVEN_USERNAME
+        server-password: MAVEN_PASSWORD
+    - name: prepare local git
+      run: git fetch --unshallow
+    - name: resolve dependencies
+      env:
+        MAVEN_USERNAME: Dennis-Koch
+        MAVEN_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+      run: ./mvnw -B dependency:go-offline -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+    - name: build & deploy
+      env:
+        MAVEN_USERNAME: Dennis-Koch
+        MAVEN_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+        SIGN_KEY_ID: ${{ secrets.MVN_SIGN_KEY_ID }}
+        SIGN_KEY: ${{ secrets.MVN_SIGN_KEY }}
+        SIGN_KEY_PASS: ${{ secrets.MVN_SIGN_KEY_PASS }}
+      run: ./mvnw -B deploy -Dsign.skipNoKey=false
+    # -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+    #- name: Update dependency graph
+#      uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6

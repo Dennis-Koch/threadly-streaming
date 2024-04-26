@@ -1,0 +1,454 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>org.threadlystreaming</groupId>
+	<artifactId>threadly-streaming-pom</artifactId>
+	<version>0.0.0-SNAPSHOT</version>
+
+	<packaging>pom</packaging>
+
+	<properties>
+		<directory.groupId>org.threadlystreaming</directory.groupId>
+		<directory.artifactId>threadly-streaming-pom</directory.artifactId>
+		
+		<org.springframework.boot.version>3.2.4</org.springframework.boot.version>
+		<org.springframework.cloud.version>2022.0.4</org.springframework.cloud.version>
+		<org.springframework.security.version>6.2.4</org.springframework.security.version>
+		<org.springdoc.version>2.1.0</org.springdoc.version>
+		<org.springframework.version>6.1.6</org.springframework.version>
+		<io.swagger.core.v3.version>2.2.12</io.swagger.core.v3.version>
+		<net.logstash.logback.version>7.4</net.logstash.logback.version>
+		<org.apache.cxf.version>4.0.2</org.apache.cxf.version>
+		<com.fasterxml.jackson.jakarta.rs.version>2.15.2</com.fasterxml.jackson.jakarta.rs.version>
+		<com.fasterxml.jackson.version>2.16.2</com.fasterxml.jackson.version>
+		<apacheHttpClient.version>4.5.14</apacheHttpClient.version>
+		<org.apache.commons_commons-collections4.version>4.4</org.apache.commons_commons-collections4.version>
+		<org.apache.commons_commons-lang3.version>3.12.0</org.apache.commons_commons-lang3.version>
+		<org.apache.commons_commons-text.version>1.10.0</org.apache.commons_commons-text.version>
+		<assertj.version>3.22.0</assertj.version>
+		<com.ibm.icu.version>71.1</com.ibm.icu.version>
+		<com.konghq.version>3.13.4</com.konghq.version>
+		<commons-beanutils.version>1.9.4</commons-beanutils.version>
+		<commons-io.version>2.11.0</commons-io.version>
+		<mockito.version>4.8.1</mockito.version>
+		<org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
+		<ch.qos.logback.version>1.4.7</ch.qos.logback.version>
+		<org.apache.logging.log4j.version>2.20.0</org.apache.logging.log4j.version>
+		<org.owasp.esapi.version>2.5.2.0</org.owasp.esapi.version>
+		<javax.annotation.version>1.3.2</javax.annotation.version>
+		<javax.ws.rs.version>2.1.1</javax.ws.rs.version>
+		<javax.servlet.version>4.0.1</javax.servlet.version>
+		<com.sun.xml.bind.version>2.3.0</com.sun.xml.bind.version>
+		<com.github.ulisesbocchio.version>3.0.5</com.github.ulisesbocchio.version>
+		<junitJupiter.version>5.10.2</junitJupiter.version>
+		<org.projectlombok.version>1.18.30</org.projectlombok.version>
+		<com.google.guava.version>32.0.1-jre</com.google.guava.version>
+		<org.opensearch.client.version>2.0.0</org.opensearch.client.version>
+		<jakarta.json.version>2.1.0</jakarta.json.version>
+		<jakarta.servlet.version>6.0.0</jakarta.servlet.version>
+		<org.bouncycastle.version>1.72</org.bouncycastle.version>
+		<org.modelmapper.version>2.4.5</org.modelmapper.version>
+		<org.apache.pdfbox.version>3.0.0-RC1</org.apache.pdfbox.version>
+		<commons-cli.version>1.5.0</commons-cli.version>
+		<org.javassist.version>3.28.0-GA</org.javassist.version>
+		<org.apache.wink.version>1.4</org.apache.wink.version>
+		<org.apache.xmlgraphics.version>1.15</org.apache.xmlgraphics.version>
+		<kotlinstdlib.version>1.7.20</kotlinstdlib.version>
+		<org.slf4j.version>2.0.7</org.slf4j.version>
+		<org.yaml.version>2.0</org.yaml.version>
+		<okhttp.version>4.11.0</okhttp.version>
+		<com.fasterxml.woodstox.version>6.5.1</com.fasterxml.woodstox.version>
+		<com.google.zxing.version>3.5.1</com.google.zxing.version>
+		<software.amazon.awssdk.version>2.20.2</software.amazon.awssdk.version>
+		<datadog.version>1.18.2</datadog.version>
+
+		<!-- plugin versions -->
+		<maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
+		<maven-assembly-plugin.version>3.4.2</maven-assembly-plugin.version>
+		<maven-buildhelper-plugin.version>3.2.0</maven-buildhelper-plugin.version>
+		<maven-checkstyle-plugin.version>3.2.0</maven-checkstyle-plugin.version>
+		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+		<maven-dependency-plugin.version>3.1.2</maven-dependency-plugin.version>
+		<maven-deploy-plugin.version>3.0.0-M1</maven-deploy-plugin.version>
+		<maven-directory-plugin.version>1.0</maven-directory-plugin.version>
+		<maven-exec-plugin.version>3.1.0</maven-exec-plugin.version>
+		<maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
+		<maven-flatten-plugin.version>1.2.7</maven-flatten-plugin.version>
+		<maven-groovy-plugin.version>2.1.1</maven-groovy-plugin.version>
+		<maven-install-plugin.version>3.1.0</maven-install-plugin.version>
+		<maven-invoker-plugin.version>3.2.1</maven-invoker-plugin.version>
+		<maven-jacoco-plugin.version>0.8.11</maven-jacoco-plugin.version>
+		<maven-jar-plugin.version>3.2.2</maven-jar-plugin.version>
+		<maven-pmd-plugin.version>3.19.0</maven-pmd-plugin.version>
+		<maven-properties-plugin.version>1.1.0</maven-properties-plugin.version>
+		<maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
+		<maven-shade-plugin.version>3.4.1</maven-shade-plugin.version>
+		<maven-sign-plugin.version>1.1.0</maven-sign-plugin.version>
+		<maven-sonar-plugin.version>3.9.1.2184</maven-sonar-plugin.version>
+		<maven-source-plugin.version>3.2.1</maven-source-plugin.version>
+		<maven-spring-boot-plugin.version>2.7.5</maven-spring-boot-plugin.version>
+		<maven-surefire-plugin.version>3.0.0-M7</maven-surefire-plugin.version>
+		<git-commitid-plugin.version>4.9.10</git-commitid-plugin.version>
+		<groovy-all.version>3.0.12</groovy-all.version>
+
+		<!-- compile settings -->
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
+
+		<!-- deploy settings -->
+		<maven.deploy.deployAtEnd>true</maven.deploy.deployAtEnd>
+
+		<!-- checkstyle settings -->
+		<checkstyle.configLocation>${project.rootDir}/config/checkstyle/checkstyle_checks.xml</checkstyle.configLocation>
+		<checkstyle.config_loc>${project.rootDir}/config/checkstyle</checkstyle.config_loc>
+
+		<!-- directory settings -->
+		<directory.groupId>${project.groupId}</directory.groupId>
+		<directory.artifactId>${project.artifactId}</directory.artifactId>
+
+		<!-- sign settings -->
+		<sign.skipNoKey>true</sign.skipNoKey>
+
+		<!-- PMD settings -->
+		<pmd.failOnViolation>true</pmd.failOnViolation>
+		<pmd.failurePriority>3</pmd.failurePriority>
+
+		<!-- source settings -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<!-- reporting settings -->
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+		<!-- resource settings -->
+		<resource.delimiter>@</resource.delimiter>
+
+		<!-- surefire settings -->
+		<surefire.skip>false</surefire.skip>
+		<surefire.reuseForks>true</surefire.reuseForks>
+		<surefire.forkCount>2</surefire.forkCount>
+		<surefire.threadCount>2</surefire.threadCount>
+		<surefire.logging.config>logback-spring-error.xml</surefire.logging.config>
+		<surefire.logging.config.path>${project.rootDir}/config/surefire/${surefire.logging.config}</surefire.logging.config.path>
+	</properties>
+
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<modules>
+		<module>threadly-streaming</module>
+		<module>threadly-utils</module>
+	</modules>
+
+	<distributionManagement>
+		<repository>
+			<id>github</id>
+			<name>GitHub Apache Maven Packages</name>
+			<url>https://maven.pkg.github.com/Dennis-Koch/threadly-streaming</url>
+		</repository>
+	</distributionManagement>
+
+	<scm>
+		<url>https://github.com/Dennis-Koch/threadly-streaming.git</url>
+	</scm>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.threadlystreaming</groupId>
+				<artifactId>threadly-streaming</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.threadlystreaming</groupId>
+				<artifactId>threadly-utils</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-lang3</artifactId>
+				<version>${org.apache.commons_commons-lang3.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.projectlombok</groupId>
+				<artifactId>lombok</artifactId>
+				<version>${org.projectlombok.version}</version>
+				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-databind</artifactId>
+				 <version>${com.fasterxml.jackson.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>jakarta.servlet</groupId>
+				<artifactId>jakarta.servlet-api</artifactId>
+				<version>${jakarta.servlet.version}</version>
+				<scope>provided</scope>
+			</dependency>
+			
+			<!-- ch.qos.logback -->
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-classic</artifactId>
+				<version>${ch.qos.logback.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-core</artifactId>
+				<version>${ch.qos.logback.version}</version>
+			</dependency>
+			
+			<!-- slf4j -->
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>${org.slf4j.version}</version>
+			</dependency>
+			
+			<!-- spring -->			
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>${org.springframework.boot.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+				<exclusions>
+					<exclusion>
+						<groupId>org.mockito</groupId>
+						<artifactId>mockito-core</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			
+			<!-- test dependencies -->
+			<dependency>
+				<groupId>org.assertj</groupId>
+				<artifactId>assertj-core</artifactId>
+				<version>${assertj.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter</artifactId>
+				<version>${junitJupiter.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter-api</artifactId>
+				<version>${junitJupiter.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.mockito</groupId>
+				<artifactId>mockito-core</artifactId>
+				<version>${mockito.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.mockito</groupId>
+				<artifactId>mockito-inline</artifactId>
+				<version>${mockito.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.mockito</groupId>
+				<artifactId>mockito-junit-jupiter</artifactId>
+				<version>${mockito.version}</version>
+				<scope>test</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<version>${maven-dependency-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-deploy-plugin</artifactId>
+					<version>${maven-deploy-plugin.version}</version>
+					<configuration>
+						<deployAtEnd>${maven.deploy.deployAtEnd}</deployAtEnd>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>exec-maven-plugin</artifactId>
+					<version>${maven-exec-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-failsafe-plugin</artifactId>
+					<version>${maven-failsafe-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-install-plugin</artifactId>
+					<version>${maven-install-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>${maven-jar-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>${maven-resources-plugin.version}</version>
+					<configuration>
+						<propertiesEncoding>${project.build.sourceEncoding}</propertiesEncoding>
+						<delimiters>
+							<delimiter>${resource.delimiter}</delimiter>
+						</delimiters>
+						<useDefaultDelimiters>false</useDefaultDelimiters>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-shade-plugin</artifactId>
+					<version>${maven-shade-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.commonjava.maven.plugins</groupId>
+					<artifactId>directory-maven-plugin</artifactId>
+					<version>${maven-directory-plugin.version}</version>
+					<executions>
+						<execution>
+							<id>project.rootDir</id>
+							<goals>
+								<goal>directory-of</goal>
+							</goals>
+							<phase>initialize</phase>
+							<configuration>
+								<property>project.rootDir</property>
+								<project>
+									<groupId>${directory.groupId}</groupId>
+									<artifactId>${directory.artifactId}</artifactId>
+								</project>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>flatten-maven-plugin</artifactId>
+					<version>${maven-flatten-plugin.version}</version>
+					<configuration>
+						<updatePomFile>true</updatePomFile>
+						<flattenMode>resolveCiFriendliesOnly</flattenMode>
+					</configuration>
+					<executions>
+						<execution>
+							<id>flatten</id>
+							<phase>initialize</phase>
+							<goals>
+								<goal>flatten</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>flatten.clean</id>
+							<phase>clean</phase>
+							<goals>
+								<goal>clean</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.jacoco</groupId>
+					<artifactId>jacoco-maven-plugin</artifactId>
+					<version>${maven-jacoco-plugin.version}</version>
+					<executions>
+						<execution>
+							<id>prepare-agent</id>
+							<goals>
+								<goal>prepare-agent</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>report</id>
+							<phase>test</phase>
+							<goals>
+								<goal>report</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-source-plugin</artifactId>
+					<version>${maven-source-plugin.version}</version>
+					<executions>
+						<execution>
+							<id>attach-sources</id>
+							<goals>
+								<goal>jar-no-fork</goal>
+								<goal>test-jar-no-fork</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>${maven-surefire-plugin.version}</version>
+					<configuration>
+						<skip>${surefire.skip}</skip>
+						<reuseForks>${surefire.reuseForks}</reuseForks>
+						<forkCount>${surefire.forkCount}</forkCount>
+						<threadCount>${surefire.threadCount}</threadCount>
+						<includes>
+							<include>**/*Test.java</include>
+							<include>**/*IT.java</include>
+						</includes>
+						<systemPropertyVariables>
+							<surefire.forkNumber>${surefire.forkNumber}</surefire.forkNumber>
+							<threading.prefix>F${surefire.forkNumber}-</threading.prefix>
+							<logback.configurationFile>${surefire.logging.config.path}</logback.configurationFile>
+							<logging.config>${surefire.logging.config.path}</logging.config>
+						</systemPropertyVariables>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.simplify4u.plugins</groupId>
+					<artifactId>sign-maven-plugin</artifactId>
+					<version>${maven-sign-plugin.version}</version>
+					<executions>
+						<execution>
+							<goals>
+								<goal>sign</goal>
+							</goals>
+							<configuration>
+								<skipNoKey>${sign.skipNoKey}</skipNoKey>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>org.commonjava.maven.plugins</groupId>
+				<artifactId>directory-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>flatten-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+</project>

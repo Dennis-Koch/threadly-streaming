@@ -1,0 +1,15 @@
+.classpath
+.factorypath
+.idea
+.project
+.settings
+.flattened-pom.xml
+.git-versioned-pom.xml
+target
+*.gz
+*.iml
+*.jar
+*.tar
+*.war
+*.zip
+/.mvn/maven.config
