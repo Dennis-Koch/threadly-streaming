@@ -1,9 +1,9 @@
 package org.threadlys.threading;
 
-import org.threadlys.utils.IStateRollback;
+import org.threadlys.utils.StateRevert;
 
 //CHECKSTYLE: JavadocMethod OFF
 @SuppressWarnings({ "checkstyle:JavadocMethod" })
 public interface TaskExecutorListenerExtendable {
-    IStateRollback registerTaskExecutorListener(TaskExecutorListener listener);
+    StateRevert registerTaskExecutorListener(TaskExecutorListener listener);
 }

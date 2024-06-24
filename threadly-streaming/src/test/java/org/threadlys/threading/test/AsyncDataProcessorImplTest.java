@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.threadlys.utils.StateRollback;
+import org.threadlys.utils.DefaultStateRevert;
 import org.threadlys.utils.configuration.CommonsUtilsSpringConfig;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -85,7 +85,7 @@ class AsyncDataProcessorImplTest {
 
     @Test
     void test() {
-        StateRollback.chain(chain -> {
+        DefaultStateRevert.chain(chain -> {
             AtomicInteger invocationCount1 = new AtomicInteger();
             AtomicInteger invocationCount2 = new AtomicInteger();
             chain.append(dataProcessorExtendable.registerDataProcessor(context -> {
@@ -121,7 +121,7 @@ class AsyncDataProcessorImplTest {
 
     @Test
     void testWithDataScopeSupplier() {
-        StateRollback.chain(chain -> {
+        DefaultStateRevert.chain(chain -> {
             AtomicInteger invocationCount1 = new AtomicInteger();
             AtomicInteger invocationCount2 = new AtomicInteger();
             chain.append(dataProcessorExtendable.registerDataProcessor(context -> {
@@ -145,12 +145,12 @@ class AsyncDataProcessorImplTest {
             assertThat(invocationCount1.get()).isEqualTo(2);
             assertThat(invocationCount2.get()).isEqualTo(2);
         })
-                .rollback();
+                .revert();
     }
 
     @Test
     void testExceptionWithoutExceptionHandler() {
-        StateRollback.chain(chain -> {
+        DefaultStateRevert.chain(chain -> {
             AtomicInteger invocationCount1 = new AtomicInteger();
             TestEntity te1 = new TestEntity().setDomainRef(1);
             TestEntity te2 = new TestEntity().setDomainRef(2);
@@ -168,12 +168,12 @@ class AsyncDataProcessorImplTest {
             assertThrows(SocketTimeoutException.class, () -> asyncDataProcessor.processAllEntities(TestEntity.class, Arrays.asList(te1, te2), (entity) -> Arrays.asList(TestDataScope.DS1),
                     entity -> new TestEntityContext(entity), entityToUsedDataScopes));
         })
-                .rollback();
+                .revert();
     }
 
     @Test
     void testExceptionWithExceptionHandler() {
-        StateRollback.chain(chain -> {
+        DefaultStateRevert.chain(chain -> {
             AtomicInteger invocationCount1 = new AtomicInteger();
             TestEntity te1 = new TestEntity().setDomainRef(1);
             TestEntity te2 = new TestEntity().setDomainRef(2);
@@ -199,6 +199,6 @@ class AsyncDataProcessorImplTest {
                     entity -> new TestEntityContext(entity), entityToUsedDataScopes));
             assertThat(exception.getCause()).isInstanceOf(SocketTimeoutException.class);
         })
-                .rollback();
+                .revert();
     }
 }

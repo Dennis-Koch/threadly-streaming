@@ -1,10 +1,10 @@
 package org.threadlys.threading;
 
-import org.threadlys.utils.IStateRollback;
+import org.threadlys.utils.StateRevert;
 
 //CHECKSTYLE: JavadocMethod OFF
 @SuppressWarnings({ "checkstyle:JavadocMethod" })
 public interface ContextSnapshotLifecycleListenerExtendable {
 
-    IStateRollback registerContextSnapshotLifecycleListener(ContextSnapshotLifecycleListener listener);
+    StateRevert registerContextSnapshotLifecycleListener(ContextSnapshotLifecycleListener listener);
 }

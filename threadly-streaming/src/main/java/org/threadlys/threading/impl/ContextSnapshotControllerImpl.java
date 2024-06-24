@@ -24,11 +24,11 @@ import org.threadlys.threading.ThreadLocalTransferrerRegistry;
 import org.threadlys.threading.Transferrable;
 import org.threadlys.threading.TransferrableThreadLocal;
 import org.threadlys.threading.TransferrableThreadLocals;
-import org.threadlys.utils.IStateRollback;
+import org.threadlys.utils.StateRevert;
 import org.threadlys.utils.ListenersListAdapter;
 import org.threadlys.utils.ReflectUtil;
 import org.threadlys.utils.SneakyThrowUtil;
-import org.threadlys.utils.StateRollback;
+import org.threadlys.utils.DefaultStateRevert;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -43,7 +43,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ContextSnapshotControllerImpl implements ContextSnapshotFactory, ContextSnapshotLifecycleListenerExtendable, ContextSnapshotController, InitializingBean, DisposableBean {
     public static final Object[] ALL_NULL_VALUES = new Object[0];
 
-    public static final IStateRollback[] ALL_NULL_ROLLBACKS = new IStateRollback[0];
+    public static final StateRevert[] ALL_NULL_REVERTS = new StateRevert[0];
 
     // this constant is intentionally different from the ABOVE. do not refactor this
     public static final Object[] EMPTY_VALUES = new Object[0];
@@ -213,28 +213,28 @@ public class ContextSnapshotControllerImpl implements ContextSnapshotFactory, Co
     }
 
     @Override
-    public IStateRollback pushContext(ContextSnapshotIntern cs) {
+    public StateRevert pushContext(ContextSnapshotIntern cs) {
         var thread = Thread.currentThread();
         log.debug("identity=CS{} - context snapshot APPLY  START  on thread '{}-{}': {}", System.identityHashCode(cs), thread.getId(), thread.getName(), cs);
         var threadLocals = cs.getThreadLocals();
         var values = cs.getValues();
 
-        var oldValueRollbacks = ALL_NULL_ROLLBACKS;
+        var oldValueReverts = ALL_NULL_REVERTS;
         for (int a = threadLocals.length; a-- > 0;) {
             @SuppressWarnings("unchecked")
             TransferrableThreadLocal<Object> threadLocal = (TransferrableThreadLocal<Object>) threadLocals[a];
             Object oldValue = threadLocal.get();
             Object newValue = values[a];
-            var rollback = threadLocal.setForFork(newValue, oldValue);
-            if (rollback == null || rollback == StateRollback.empty()) {
+            var revert = threadLocal.setForFork(newValue, oldValue);
+            if (revert == null || revert == DefaultStateRevert.empty()) {
                 // no old value to store
                 continue;
             }
-            if (oldValueRollbacks == ALL_NULL_ROLLBACKS) {
+            if (oldValueReverts == ALL_NULL_REVERTS) {
                 // once: now the full lazy instantiation of the oldValues storage
-                oldValueRollbacks = new IStateRollback[threadLocals.length];
+                oldValueReverts = new StateRevert[threadLocals.length];
             }
-            oldValueRollbacks[a] = rollback;
+            oldValueReverts[a] = revert;
         }
         var oldThreadScopeMap = transferrableThreadScope.getAndRemoveThreadScopeMap();
         var oldBeanProcessor = transferrableThreadScope.getBeanProcessor();
@@ -246,7 +246,7 @@ public class ContextSnapshotControllerImpl implements ContextSnapshotFactory, Co
             pushedContexts = new ArrayList<>();
             pushedContextsTL.set(pushedContexts);
         }
-        pushedContexts.add(new PushedContext(cs, oldValueRollbacks, oldThreadScopeMap, oldBeanProcessor));
+        pushedContexts.add(new PushedContext(cs, oldValueReverts, oldThreadScopeMap, oldBeanProcessor));
 
         log.debug("identity=CS{} - context snapshot APPLY  FINISH on thread '{}-{}': {}", System.identityHashCode(cs), thread.getId(), thread.getName(), cs);
         listeners.stream()
@@ -294,14 +294,14 @@ public class ContextSnapshotControllerImpl implements ContextSnapshotFactory, Co
         return recentContext;
     }
 
-    protected void applyValuesToThreadLocals(IStateRollback[] oldValues, TransferrableThreadLocal<?>[] threadLocals) {
-        if (oldValues == ALL_NULL_ROLLBACKS) {
+    protected void applyValuesToThreadLocals(StateRevert[] oldValues, TransferrableThreadLocal<?>[] threadLocals) {
+        if (oldValues == ALL_NULL_REVERTS) {
             return;
         }
         for (int a = oldValues.length; a-- > 0;) {
             var oldValue = oldValues[a];
             if (oldValue != null) {
-                oldValue.rollback();
+                oldValue.revert();
             }
         }
     }
@@ -322,7 +322,7 @@ public class ContextSnapshotControllerImpl implements ContextSnapshotFactory, Co
     }
 
     @Override
-    public IStateRollback registerContextSnapshotLifecycleListener(ContextSnapshotLifecycleListener listener) {
+    public StateRevert registerContextSnapshotLifecycleListener(ContextSnapshotLifecycleListener listener) {
         ListenersListAdapter.registerListener(listener, listeners);
         return () -> unregisterContextSnapshotLifecycleListener(listener);
     }

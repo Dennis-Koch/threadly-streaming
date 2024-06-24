@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ForkJoinPool;
 
-import org.threadlys.utils.IStateRollback;
+import org.threadlys.utils.StateRevert;
 import org.threadlys.utils.ListenersListAdapter;
-import org.threadlys.utils.StateRollback;
+import org.threadlys.utils.DefaultStateRevert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.task.TaskExecutor;
@@ -51,12 +51,12 @@ public class ForkJoinPoolTaskExecutor implements TaskExecutor, TaskExecutorListe
             command.run();
             return;
         }
-        var rollback = StateRollback.empty();
+        var revert = DefaultStateRevert.empty();
         try {
             var fjp = forkJoinPoolGuard.currentForkJoinPool();
             if (fjp == null) {
                 fjp = forkJoinPoolGuard.getDefaultForkJoinPool();
-                rollback = forkJoinPoolGuard.pushForkJoinPool(fjp);
+                revert = forkJoinPoolGuard.pushForkJoinPool(fjp);
             }
             var cs = contextSnapshotFactory.createSnapshot();
             if (!log.isDebugEnabled() && listeners.isEmpty()) {
@@ -85,12 +85,12 @@ public class ForkJoinPoolTaskExecutor implements TaskExecutor, TaskExecutorListe
             }));
             listeners.forEach(listener -> listener.taskQueued(command));
         } finally {
-            rollback.rollback();
+            revert.revert();
         }
     }
 
     @Override
-    public IStateRollback registerTaskExecutorListener(TaskExecutorListener listener) {
+    public StateRevert registerTaskExecutorListener(TaskExecutorListener listener) {
         ListenersListAdapter.registerListener(listener, listeners);
         return () -> unregisterTaskExecutorListener(listener);
     }

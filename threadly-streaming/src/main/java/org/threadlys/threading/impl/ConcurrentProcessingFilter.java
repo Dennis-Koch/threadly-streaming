@@ -93,20 +93,20 @@ public class ConcurrentProcessingFilter extends OncePerRequestFilter {
         }
         if (Boolean.TRUE.equals(threadlyStreamingConfiguration.getPoolPerRequest())) {
             var fjp = acquireForkJoinPool();
-            var rollback = forkJoinPoolGuard.pushForkJoinPool(fjp);
+            var revert = forkJoinPoolGuard.pushForkJoinPool(fjp);
             try {
                 forkJoinPoolGuard.reentrantInvokeOnForkJoinPool(() -> filterChain.doFilter(request, response));
             } finally {
-                rollback.rollback();
+                revert.revert();
                 releaseForkJoinPool(fjp);
             }
         } else {
             var fjp = forkJoinPoolGuard.getDefaultForkJoinPool();
-            var rollback = forkJoinPoolGuard.pushForkJoinPool(fjp);
+            var revert = forkJoinPoolGuard.pushForkJoinPool(fjp);
             try {
                 forkJoinPoolGuard.reentrantInvokeOnForkJoinPool(() -> filterChain.doFilter(request, response));
             } finally {
-                rollback.rollback();
+                revert.revert();
             }
         }
     }

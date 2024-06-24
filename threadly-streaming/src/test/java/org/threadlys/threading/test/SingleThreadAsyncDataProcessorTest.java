@@ -15,7 +15,7 @@ import org.threadlys.streams.AsyncDataProcessor;
 import org.threadlys.streams.DataProcessor;
 import org.threadlys.streams.DataProcessorContext;
 import org.threadlys.streams.DataProcessorExtendable;
-import org.threadlys.utils.StateRollback;
+import org.threadlys.utils.DefaultStateRevert;
 import org.threadlys.utils.configuration.CommonsUtilsSpringConfig;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -85,7 +85,7 @@ class SingleThreadAsyncDataProcessorTest {
 
     @Test
     void test() {
-        StateRollback.chain(chain -> {
+        DefaultStateRevert.chain(chain -> {
             AtomicInteger invocationCount1 = new AtomicInteger();
             AtomicInteger invocationCount2 = new AtomicInteger();
             chain.append(dataProcessorExtendable.registerDataProcessor(context -> {
@@ -121,7 +121,7 @@ class SingleThreadAsyncDataProcessorTest {
 
     @Test
     void testWithDataScopeSupplier() {
-        StateRollback.chain(chain -> {
+        DefaultStateRevert.chain(chain -> {
             AtomicInteger invocationCount1 = new AtomicInteger();
             AtomicInteger invocationCount2 = new AtomicInteger();
             chain.append(dataProcessorExtendable.registerDataProcessor(context -> {
@@ -145,13 +145,13 @@ class SingleThreadAsyncDataProcessorTest {
             assertThat(invocationCount1.get()).isEqualTo(2);
             assertThat(invocationCount2.get()).isEqualTo(2);
         })
-                .rollback();
+                .revert();
     }
 
     @Test
     void testWithDataProcessorChain() {
         for (int a = 10; a-- > 0;) {
-            StateRollback.chain(chain -> {
+            DefaultStateRevert.chain(chain -> {
                 AtomicInteger invocationCount1 = new AtomicInteger();
                 AtomicInteger invocationCount2 = new AtomicInteger();
                 AtomicInteger invocationCount3 = new AtomicInteger();
@@ -232,7 +232,7 @@ class SingleThreadAsyncDataProcessorTest {
                     entityToInvocationOrder.clear();
                 }
             })
-                    .rollback();
+                    .revert();
         }
     }
 }

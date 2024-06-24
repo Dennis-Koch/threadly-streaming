@@ -42,7 +42,7 @@ public interface ContextSnapshotFactory extends ParallelStreamFassade {
      * thread. Snapshot handles are considered applied if there is one of the
      * following active on the stack:
      * <ul>
-     * <li>{@link ContextSnapshot#apply(org.threadlys.utils.IStateRollback...)}</li>
+     * <li>{@link ContextSnapshot#apply(org.threadlys.utils.StateRevert...)}</li>
      * <li>{@link ContextSnapshot#scoped(org.threadlys.streams.CheckedRunnable)}
      * or any other of the scoped() overloads</li>
      * <li>{@link ContextSnapshot#push()}</li>

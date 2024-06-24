@@ -16,9 +16,9 @@ import org.threadlys.streams.CheckedRunnable;
 import org.threadlys.streams.CheckedSupplier;
 import org.threadlys.threading.ContextSnapshot;
 import org.threadlys.threading.ParallelStreamFassade;
-import org.threadlys.utils.IStateRollback;
+import org.threadlys.utils.StateRevert;
 import org.threadlys.utils.SneakyThrowUtil;
-import org.threadlys.utils.StateRollback;
+import org.threadlys.utils.DefaultStateRevert;
 
 import lombok.RequiredArgsConstructor;
 
@@ -117,13 +117,13 @@ public class NoOpContextSnapshot implements ContextSnapshot {
     }
 
     @Override
-    public IStateRollback apply() {
-        return StateRollback.empty();
+    public StateRevert apply() {
+        return DefaultStateRevert.empty();
     }
 
     @Override
-    public IStateRollback apply(IStateRollback... rollbacks) {
-        return StateRollback.all(rollbacks);
+    public StateRevert apply(StateRevert... reverts) {
+        return DefaultStateRevert.all(reverts);
     }
 
     @Override

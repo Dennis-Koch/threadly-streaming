@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.threadlys.utils.ApplicationContextHolder;
-import org.threadlys.utils.IStateRollback;
+import org.threadlys.utils.StateRevert;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +23,7 @@ public class TransferrableApplicationContext implements TransferrableThreadLocal
         }
 
         @Override
-        public IStateRollback setForFork(ApplicationContext newForkedValue, ApplicationContext oldForkedValue) {
+        public StateRevert setForFork(ApplicationContext newForkedValue, ApplicationContext oldForkedValue) {
             ApplicationContextHolder.setContext(newForkedValue);
             return () -> ApplicationContextHolder.setContext(oldForkedValue);
         }

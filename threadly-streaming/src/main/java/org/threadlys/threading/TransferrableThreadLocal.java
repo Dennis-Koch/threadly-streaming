@@ -1,7 +1,7 @@
 package org.threadlys.threading;
 
 import org.threadlys.threading.impl.ContextSnapshotController;
-import org.threadlys.utils.IStateRollback;
+import org.threadlys.utils.StateRevert;
 
 /**
  * Encapsulates the logic to read and write from a thread-local handle. We don't use a thread-local handle directly in order to allow via fassade-pattern also more customizable logic in order to
@@ -14,7 +14,7 @@ import org.threadlys.utils.IStateRollback;
 public interface TransferrableThreadLocal<T> {
     /**
      * Called from the master thread in order to create a snapshot of all thread-locals while executing {@link ContextSnapshotFactory#createSnapshot()}. In addition this method is also called by
-     * forked threads while executing {@link ContextSnapshotController#pushContext(org.threadlys.threading.impl.ContextSnapshotImpl, org.threadlys.utils.IStateRollback...)}
+     * forked threads while executing {@link ContextSnapshotController#pushContext(org.threadlys.threading.impl.ContextSnapshotImpl, org.threadlys.utils.StateRevert...)}
      * in order to be able to restore the previous state of the worker.
      *
      * @return
@@ -27,5 +27,5 @@ public interface TransferrableThreadLocal<T> {
      * @param value
      *            The thread-local value that shall be applied to the current thread for the given handle
      */
-    IStateRollback setForFork(T newForkedValue, T oldForkedValue);
+    StateRevert setForFork(T newForkedValue, T oldForkedValue);
 }
