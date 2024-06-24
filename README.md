@@ -41,12 +41,10 @@ So lets try a better version - still without dedicated library support...
 
 ```java
 setFooState(fooValue1);
-try{
-
-run_logic_that_works_with_state_of_foo();
-}finally{
-
-clearFooState();
+try {
+  run_logic_that_works_with_state_of_foo();
+} finally {
+  clearFooState();
 }
 ```
 
@@ -74,23 +72,18 @@ addition to our foo state. And we make it so that the fooState is applied condit
 ```java
 var oldFooState = getFooState();
 var oldBarState = getBarState();
-if(conditionIsSatisfied){
-
-setFooState(fooValue1);
+if (conditionIsSatisfied) {
+  setFooState(fooValue1);
 }
-
 setBarState(barValue1);
-try{
-
-run_logic_that_works_with_state_of_foo_and_bar();
-}finally{
-
-setBarState(oldBarState);
-  if(conditionIsSatisfied){
-
-setFooState(oldFooState);
+try  {
+  run_logic_that_works_with_state_of_foo_and_bar();
+} finally {
+  setBarState(oldBarState);
+  if (conditionIsSatisfied) {
+    setFooState(oldFooState);
   }
-                  }
+}
 ```
 
 **You might already expect it: This approach - despite all the increased clutter that we had to produce already - still
@@ -105,27 +98,22 @@ our "transactional" problem. An ugly - but admitted truly robust - solution woul
 
 ```java
 var oldFooState = getFooState();
-if(conditionIsSatisfied){
-
-setFooState(fooValue1);
+if (conditionIsSatisfied) {
+  setFooState(fooValue1);
 }
-                try{
-var oldBarState = getBarState();
-
-setBarState(barValue1);
-  try{
-
-run_logic_that_works_with_state_of_foo_and_bar();      
-  }finally{
-
-setBarState(oldBarState);
+try {
+  var oldBarState = getBarState();
+  setBarState(barValue1);
+  try {
+    run_logic_that_works_with_state_of_foo_and_bar();
+  } finally {
+    setBarState(oldBarState);
   }
-                  }finally{
-                  if(conditionIsSatisfied){
-
-setFooState(oldFooState);
+} finally {
+  if(conditionIsSatisfied) {
+    setFooState(oldFooState);
   }
-                  }
+}
 ```
 
 In real case scenarios it often becomes even more complex than what we have seen here in our example above. Normally the
@@ -143,13 +131,10 @@ var revert = DefaultStateRevert.chain(chain -> {
     }
     chain.append(pushBarState(barValue1));
 });
-try{
-
-run_logic_that_works_with_state_of_foo_and_bar();
-}finally{
-                revert.
-
-revert();    
+try {
+  run_logic_that_works_with_state_of_foo_and_bar();
+} finally {
+  revert.revert();    
 }
 ```
 

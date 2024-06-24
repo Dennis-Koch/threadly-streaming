@@ -32,10 +32,10 @@ import java.util.stream.Collectors;
 import org.threadlys.threading.ContextSnapshot;
 import org.threadlys.threading.ContextSnapshotFactory;
 import org.threadlys.threading.impl.ForkJoinPoolGuard;
-import org.threadlys.utils.IStateRollback;
+import org.threadlys.utils.IStateRevert;
 import org.threadlys.utils.ListenersMapListAdapter;
 import org.threadlys.utils.SneakyThrowUtil;
-import org.threadlys.utils.StateRollback;
+import org.threadlys.utils.DefaultStateRevert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -353,12 +353,12 @@ public class AsyncDataProcessorImpl implements AsyncDataProcessor, DataProcessor
     }
 
     protected <E, C extends DataProcessorContext> void executeDataProcessorStages(List<List<RunnableSupplier<E, C>>> stageToRunnableSuppliersList) {
-        var rollback = StateRollback.empty();
+        var revert = DefaultStateRevert.empty();
         try {
             var fjp = forkJoinPoolGuard.currentForkJoinPool();
             if (fjp == null) {
                 fjp = forkJoinPoolGuard.getDefaultForkJoinPool();
-                rollback = forkJoinPoolGuard.pushForkJoinPool(fjp);
+                revert = forkJoinPoolGuard.pushForkJoinPool(fjp);
             }
             for (var runnableSuppliersList : stageToRunnableSuppliersList) {
                 var callables = new ArrayList<Callable<CheckedConsumer<E>>>(runnableSuppliersList.size());
@@ -385,7 +385,7 @@ public class AsyncDataProcessorImpl implements AsyncDataProcessor, DataProcessor
                 updateEntities(futures, indexToEntityMap, fjp);
             }
         } finally {
-            rollback.rollback();
+            revert.revert();
         }
     }
 
@@ -769,23 +769,23 @@ public class AsyncDataProcessorImpl implements AsyncDataProcessor, DataProcessor
         var exceptionHandlers = dataProcessorToExceptionHandlerMap.get(dataProcessor);
         if (exceptionHandlers == null || exceptionHandlers.isEmpty()) {
             return () -> {
-                var rollback = cs.apply();
+                var revert = cs.apply();
                 try {
                     return dataProcessor.process(processorContext);
                 } finally {
-                    rollback.rollback();
+                    revert.revert();
                 }
             };
         } else {
             return () -> {
-                var rollback = cs.apply();
+                var revert = cs.apply();
                 try {
                     return dataProcessor.process(processorContext);
                 } catch (Throwable e) {
                     var lastExceptionHandler = (DataProcessorExceptionHandler) exceptionHandlers.get(exceptionHandlers.size() - 1);
                     return lastExceptionHandler.handleProcessException(dataProcessor, processorContext, e);
                 } finally {
-                    rollback.rollback();
+                    revert.revert();
                 }
             };
         }
@@ -793,7 +793,7 @@ public class AsyncDataProcessorImpl implements AsyncDataProcessor, DataProcessor
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
-    public <E> IStateRollback registerDataProcessor(DataProcessor<E, ?> dataProcessor, Class<? extends E> entityType, DataScope dataScope) {
+    public <E> IStateRevert registerDataProcessor(DataProcessor<E, ?> dataProcessor, Class<? extends E> entityType, DataScope dataScope) {
         writeLock.lock();
         try {
             ConfigurationState newState = new ConfigurationState(state);
@@ -831,7 +831,7 @@ public class AsyncDataProcessorImpl implements AsyncDataProcessor, DataProcessor
     }
 
     @Override
-    public <E> IStateRollback registerDataProcessorDependency(DataProcessor<E, ?> dataProcessor, DataScope requiredDataScope) {
+    public <E> IStateRevert registerDataProcessorDependency(DataProcessor<E, ?> dataProcessor, DataScope requiredDataScope) {
         writeLock.lock();
         try {
             ConfigurationState newState = new ConfigurationState(state);
@@ -855,7 +855,7 @@ public class AsyncDataProcessorImpl implements AsyncDataProcessor, DataProcessor
     }
 
     @Override
-    public <E> IStateRollback registerDataProcessorExceptionHandler(DataProcessor<E, ?> dataProcessor, DataProcessorExceptionHandler exceptionHandler) {
+    public <E> IStateRevert registerDataProcessorExceptionHandler(DataProcessor<E, ?> dataProcessor, DataProcessorExceptionHandler exceptionHandler) {
         writeLock.lock();
         try {
             ConfigurationState newState = new ConfigurationState(state);

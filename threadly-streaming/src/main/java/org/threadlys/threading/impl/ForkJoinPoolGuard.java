@@ -16,9 +16,9 @@ import java.util.function.Supplier;
 
 import org.threadlys.streams.CheckedRunnable;
 import org.threadlys.utils.FutureUtil;
-import org.threadlys.utils.IStateRollback;
+import org.threadlys.utils.IStateRevert;
 import org.threadlys.utils.SneakyThrowUtil;
-import org.threadlys.utils.StateRollback;
+import org.threadlys.utils.DefaultStateRevert;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.NamedThreadLocal;
@@ -108,11 +108,11 @@ public class ForkJoinPoolGuard implements TransferrableThreadLocalProvider, Disp
 
     private Optional<DecoratedForkJoinPool> defaultForkJoinPool = Optional.empty();
 
-    private IStateRollback defaultListenerRollback = StateRollback.empty();
+    private IStateRevert defaultListenerRevert = DefaultStateRevert.empty();
 
     @Override
     public void destroy() throws Exception {
-        defaultListenerRollback.rollback();
+        defaultListenerRevert.revert();
         defaultForkJoinPool.ifPresent(ForkJoinPool::shutdownNow);
     }
 
@@ -131,7 +131,7 @@ public class ForkJoinPoolGuard implements TransferrableThreadLocalProvider, Disp
                 return fjp;
             }
             var dfjp = createForkJoinPool();
-            defaultListenerRollback = StateRollback.chain(chain -> {
+            defaultListenerRevert = DefaultStateRevert.chain(chain -> {
                 for (var listener : forkJoinPoolListeners) {
                     chain.append(dfjp.registerListener(listener));
                 }
@@ -155,11 +155,11 @@ public class ForkJoinPoolGuard implements TransferrableThreadLocalProvider, Disp
                 threadlyStreamingConfiguration.getPoolSize(), threadlyStreamingConfiguration.getMaximumPoolSize(), 1, fjp -> true, 10L, TimeUnit.SECONDS);
     }
 
-    public IStateRollback pushForkJoinPool(ForkJoinPool fjp) {
+    public IStateRevert pushForkJoinPool(ForkJoinPool fjp) {
         var existingFjp = forkJoinPoolTL.get();
         if (existingFjp == null && fjp == null) {
             // nothing to do
-            return StateRollback.empty();
+            return DefaultStateRevert.empty();
         }
         forkJoinPoolTL.set(fjp);
         return () -> {
@@ -171,14 +171,14 @@ public class ForkJoinPoolGuard implements TransferrableThreadLocalProvider, Disp
         };
     }
 
-    public IStateRollback pushForkJoinPoolIfRequired() {
+    public IStateRevert pushForkJoinPoolIfRequired() {
         var existingFjp = forkJoinPoolTL.get();
         if (existingFjp != null) {
             // nothing to do
-            return StateRollback.empty();
+            return DefaultStateRevert.empty();
         }
         var fjp = createForkJoinPool();
-        return StateRollback.chain(chain -> {
+        return DefaultStateRevert.chain(chain -> {
             chain.append(pushForkJoinPool(fjp));
             if (log.isDebugEnabled()) {
                 log.debug("Concurrent processing enabled (" + threadlyStreamingConfiguration.getPoolSize() + " workers)");
@@ -213,7 +213,7 @@ public class ForkJoinPoolGuard implements TransferrableThreadLocalProvider, Disp
      */
     public <R> R reentrantInvokeOnForkJoinPoolWithResult(CheckedSupplier<R> joinPoint) {
         Throwable ex = null;
-        var rollback = pushForkJoinPoolIfRequired();
+        var revert = pushForkJoinPoolIfRequired();
         try {
             ContextSnapshot cs = contextSnapshotFactory.createSnapshot();
             if (threadlyStreamingConfiguration.isParallelActive()) {
@@ -230,7 +230,7 @@ public class ForkJoinPoolGuard implements TransferrableThreadLocalProvider, Disp
         } catch (Throwable e) {
             ex = sneakyThrowUtil.mergeStackTraceWithCause(e);
         } finally {
-            rollback.rollback();
+            revert.revert();
         }
         throw sneakyThrowUtil.sneakyThrow(ex);
     }
@@ -256,11 +256,11 @@ public class ForkJoinPoolGuard implements TransferrableThreadLocalProvider, Disp
 
     @SneakyThrows
     protected <R> R invokeJoinPoint(ContextSnapshot cs, CheckedSupplier<R> joinPoint) {
-        var rollback = cs != null ? cs.apply() : StateRollback.empty();
+        var revert = cs != null ? cs.apply() : DefaultStateRevert.empty();
         try {
             return joinPoint.get();
         } finally {
-            rollback.rollback();
+            revert.revert();
         }
     }
 }

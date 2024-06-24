@@ -3,9 +3,9 @@ package org.threadlys.threading.impl;
 import java.util.Arrays;
 import java.util.List;
 
-import org.threadlys.utils.IStateRollback;
+import org.threadlys.utils.IStateRevert;
 import org.threadlys.utils.ReflectUtil;
-import org.threadlys.utils.StateRollback;
+import org.threadlys.utils.DefaultStateRevert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -28,7 +28,7 @@ public class TransferrableSecurityContext implements TransferrableThreadLocalPro
         }
 
         @Override
-        public IStateRollback setForFork(Authentication newForkedValue, Authentication oldForkedValue) {
+        public IStateRevert setForFork(Authentication newForkedValue, Authentication oldForkedValue) {
             SecurityContextHolder.getContext()
                     .setAuthentication(newForkedValue);
             if (oldForkedValue == null) {
@@ -45,12 +45,12 @@ public class TransferrableSecurityContext implements TransferrableThreadLocalPro
         }
     }
 
-    public static IStateRollback pushAuthentication(Authentication authentication) {
+    public static IStateRevert pushAuthentication(Authentication authentication) {
         SecurityContext context = SecurityContextHolder.getContext();
         Authentication oldAuthentication = context.getAuthentication();
         if (oldAuthentication == authentication) {
             // nothing to do
-            return StateRollback.empty();
+            return DefaultStateRevert.empty();
         }
         SecurityContextHolder.getContext()
                 .setAuthentication(authentication);

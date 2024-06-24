@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.threadlys.utils.IStateRollback;
+import org.threadlys.utils.IStateRevert;
 import org.threadlys.utils.ListenersMapAdapter;
 import org.springframework.stereotype.Component;
 
@@ -28,7 +28,7 @@ public class ThreadLocalTransferrerRegistryImpl implements ThreadLocalTransferre
     }
 
     @Override
-    public <T> IStateRollback registerThreadLocalTransferrer(ThreadLocalTransferrer<? super T> transferrer, Class<T> beanType) {
+    public <T> IStateRevert registerThreadLocalTransferrer(ThreadLocalTransferrer<? super T> transferrer, Class<T> beanType) {
         ListenersMapAdapter.registerListener(transferrer, beanType, beanTypeToTransferrerMap);
         return () -> unregisterThreadLocalTransferrer(transferrer, beanType);
     }

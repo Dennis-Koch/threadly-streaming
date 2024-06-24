@@ -26,10 +26,10 @@ import org.threadlys.threading.ThreadLocalBean;
 import org.threadlys.threading.ThreadLocalTransferrer;
 import org.threadlys.threading.ThreadLocalTransferrerRegistry;
 import org.threadlys.threading.TransferrableThreadLocal;
-import org.threadlys.utils.IStateRollback;
+import org.threadlys.utils.IStateRevert;
 import org.threadlys.utils.ReflectUtil;
 import org.threadlys.utils.SneakyThrowUtil;
-import org.threadlys.utils.StateRollback;
+import org.threadlys.utils.DefaultStateRevert;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -94,25 +94,25 @@ public class ContextSnapshotImpl implements ContextSnapshot, ContextSnapshotInte
     }
 
     @Override
-    public IStateRollback apply() {
+    public IStateRevert apply() {
         return contextSnapshotController.pushContext(this);
     }
 
     @Override
-    public IStateRollback apply(IStateRollback... rollbacks) {
-        return StateRollback.prepend(contextSnapshotController.pushContext(this), rollbacks);
+    public IStateRevert apply(IStateRevert... reverts) {
+        return DefaultStateRevert.prepend(contextSnapshotController.pushContext(this), reverts);
     }
 
     @Override
     public <T> Predicate<T> scopedPredicate(CheckedPredicate<T> predicate) {
         return t -> {
-            IStateRollback rollback = contextSnapshotController.pushContext(this);
+            IStateRevert revert = contextSnapshotController.pushContext(this);
             try {
                 return predicate.test(t);
             } catch (Exception e) {
                 throw sneakyThrowUtil.sneakyThrow(e);
             } finally {
-                rollback.rollback();
+                revert.revert();
             }
         };
     }
@@ -120,13 +120,13 @@ public class ContextSnapshotImpl implements ContextSnapshot, ContextSnapshotInte
     @Override
     public <T> Consumer<T> scopedConsumer(CheckedConsumer<T> consumer) {
         return t -> {
-            IStateRollback rollback = contextSnapshotController.pushContext(this);
+            IStateRevert revert = contextSnapshotController.pushContext(this);
             try {
                 consumer.accept(t);
             } catch (Exception e) {
                 throw sneakyThrowUtil.sneakyThrow(e);
             } finally {
-                rollback.rollback();
+                revert.revert();
             }
         };
     }
@@ -134,13 +134,13 @@ public class ContextSnapshotImpl implements ContextSnapshot, ContextSnapshotInte
     @Override
     public <T> Callable<T> scopedCallable(CheckedCallable<T> callable) {
         return () -> {
-            IStateRollback rollback = contextSnapshotController.pushContext(this);
+            IStateRevert revert = contextSnapshotController.pushContext(this);
             try {
                 return callable.call();
             } catch (Exception e) {
                 throw sneakyThrowUtil.sneakyThrow(e);
             } finally {
-                rollback.rollback();
+                revert.revert();
             }
         };
     }
@@ -148,13 +148,13 @@ public class ContextSnapshotImpl implements ContextSnapshot, ContextSnapshotInte
     @Override
     public <T, R> Function<T, R> scoped(CheckedFunction<T, R> function) {
         return t -> {
-            IStateRollback rollback = contextSnapshotController.pushContext(this);
+            IStateRevert revert = contextSnapshotController.pushContext(this);
             try {
                 return function.apply(t);
             } catch (Exception e) {
                 throw sneakyThrowUtil.sneakyThrow(e);
             } finally {
-                rollback.rollback();
+                revert.revert();
             }
         };
     }
@@ -162,13 +162,13 @@ public class ContextSnapshotImpl implements ContextSnapshot, ContextSnapshotInte
     @Override
     public Runnable scoped(CheckedRunnable runnable) {
         return () -> {
-            IStateRollback rollback = contextSnapshotController.pushContext(this);
+            IStateRevert revert = contextSnapshotController.pushContext(this);
             try {
                 runnable.run();
             } catch (Exception e) {
                 throw sneakyThrowUtil.sneakyThrow(e);
             } finally {
-                rollback.rollback();
+                revert.revert();
             }
         };
     }
@@ -176,13 +176,13 @@ public class ContextSnapshotImpl implements ContextSnapshot, ContextSnapshotInte
     @Override
     public <R> Supplier<R> scoped(CheckedSupplier<R> supplier) {
         return () -> {
-            IStateRollback rollback = contextSnapshotController.pushContext(this);
+            IStateRevert revert = contextSnapshotController.pushContext(this);
             try {
                 return supplier.get();
             } catch (Exception e) {
                 throw sneakyThrowUtil.sneakyThrow(e);
             } finally {
-                rollback.rollback();
+                revert.revert();
             }
         };
     }

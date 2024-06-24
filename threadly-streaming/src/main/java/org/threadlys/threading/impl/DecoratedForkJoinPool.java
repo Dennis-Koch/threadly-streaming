@@ -19,8 +19,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Predicate;
 
-import org.threadlys.utils.IStateRollback;
-import org.threadlys.utils.StateRollback;
+import org.threadlys.utils.IStateRevert;
+import org.threadlys.utils.DefaultStateRevert;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -39,11 +39,11 @@ public class DecoratedForkJoinPool extends ForkJoinPool {
 
         @Override
         public void run() {
-            var rollback = forkJoinPool.pushMonitorCurrentThread();
+            var revert = forkJoinPool.pushMonitorCurrentThread();
             try {
                 runnable.run();
             } finally {
-                rollback.rollback();
+                revert.revert();
             }
         }
     }
@@ -58,11 +58,11 @@ public class DecoratedForkJoinPool extends ForkJoinPool {
 
         @Override
         public T call() throws Exception {
-            var rollback = forkJoinPool.pushMonitorCurrentThread();
+            var revert = forkJoinPool.pushMonitorCurrentThread();
             try {
                 return callable.call();
             } finally {
-                rollback.rollback();
+                revert.revert();
             }
         }
     }
@@ -97,7 +97,7 @@ public class DecoratedForkJoinPool extends ForkJoinPool {
         this.workerTimeout = workerTimeout;
     }
 
-    public IStateRollback registerListener(DecoratedForkJoinPoolListener listener) {
+    public IStateRevert registerListener(DecoratedForkJoinPoolListener listener) {
         Objects.requireNonNull(listener, "listener must be valid");
         listeners.add(listener);
         return () -> listeners.remove(listener);
@@ -121,10 +121,10 @@ public class DecoratedForkJoinPool extends ForkJoinPool {
                 .toList();
     }
 
-    protected IStateRollback pushMonitorCurrentThread() {
+    protected IStateRevert pushMonitorCurrentThread() {
         if (workerTimeout == null && listeners.isEmpty()) {
             // no monitoring at all
-            return StateRollback.empty();
+            return DefaultStateRevert.empty();
         }
         var thread = Thread.currentThread();
         threadToReentrantCounterMap.compute(thread, (key, reentrantCounter) -> {
@@ -142,7 +142,7 @@ public class DecoratedForkJoinPool extends ForkJoinPool {
             threadToReentrantCounterMap.compute(thread, (key, reentrantCounter) -> {
                 if (reentrantCounter == null || reentrantCounter.getCounter() <= 1) {
                     // could happen in error cases where the thread referent is already cleaned up and the key lookup therefore not successful anymore
-                    // also may happen in erroneus handling of the returned rollback handle
+                    // also may happen in erroneus handling of the returned revert handle
                     return null;
                 }
                 reentrantCounter.decrementCounter();

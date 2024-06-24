@@ -88,7 +88,7 @@ public class DecoratedForkJoinPoolTest {
         Collection<Thread> busyThreads;
         Thread monitoredThread;
 
-        var registerRollback = fjp.registerListener(new DecoratedForkJoinPoolListener() {
+        var registerRevert = fjp.registerListener(new DecoratedForkJoinPoolListener() {
             @Override
             public void threadPushed(DecoratedForkJoinPool forkJoinPool, Thread fjpThread) {
                 assertThat(threadRef.get()).isNull();
@@ -125,7 +125,7 @@ public class DecoratedForkJoinPoolTest {
 
             awaitLatchDefault(threadPopLatch);
         } finally {
-            registerRollback.rollback();
+            registerRevert.revert();
         }
 
         // original collection unmodified
@@ -150,7 +150,7 @@ public class DecoratedForkJoinPoolTest {
         Collection<Thread> busyThreads;
         Thread monitoredThread;
 
-        var registerRollback = fjp.registerListener(new DecoratedForkJoinPoolListener() {
+        var registerRevert = fjp.registerListener(new DecoratedForkJoinPoolListener() {
             @Override
             public void threadPushed(DecoratedForkJoinPool forkJoinPool, Thread fjpThread) {
                 assertThat(threadRef.get()).isNull();
@@ -199,7 +199,7 @@ public class DecoratedForkJoinPoolTest {
 
             awaitLatchDefault(threadPopLatch);
         } finally {
-            registerRollback.rollback();
+            registerRevert.revert();
         }
 
         // original collection unmodified

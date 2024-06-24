@@ -72,11 +72,11 @@ public class StateFetcherFactoryImpl implements StateFetcherFactory, DisposableB
 
     protected <T> T executeCallableAndCleanupWorkerState(Callable<T> task) throws Exception {
         var cs = contextSnapshotFactory.createSnapshot();
-        var rollback = cs.apply();
+        var revert = cs.apply();
         try {
             return task.call();
         } finally {
-            rollback.rollback();
+            revert.revert();
         }
     }
 

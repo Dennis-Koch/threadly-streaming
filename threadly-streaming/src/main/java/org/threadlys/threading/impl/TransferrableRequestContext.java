@@ -3,8 +3,8 @@ package org.threadlys.threading.impl;
 import java.util.Arrays;
 import java.util.List;
 
-import org.threadlys.utils.IStateRollback;
-import org.threadlys.utils.StateRollback;
+import org.threadlys.utils.IStateRevert;
+import org.threadlys.utils.DefaultStateRevert;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -23,7 +23,7 @@ public class TransferrableRequestContext implements TransferrableThreadLocalProv
         }
 
         @Override
-        public IStateRollback setForFork(RequestAttributes newForkedValue, RequestAttributes oldForkedValue) {
+        public IStateRevert setForFork(RequestAttributes newForkedValue, RequestAttributes oldForkedValue) {
             RequestContextHolder.setRequestAttributes(newForkedValue, false);
             return () -> RequestContextHolder.setRequestAttributes(oldForkedValue, false);
         }
@@ -34,11 +34,11 @@ public class TransferrableRequestContext implements TransferrableThreadLocalProv
         }
     }
 
-    public static IStateRollback pushRequestAttributes(RequestAttributes requestAttributes) {
+    public static IStateRevert pushRequestAttributes(RequestAttributes requestAttributes) {
         RequestAttributes oldRequestAttributes = RequestContextHolder.getRequestAttributes();
         if (oldRequestAttributes == requestAttributes) {
             // nothing to do
-            return StateRollback.empty();
+            return DefaultStateRevert.empty();
         }
         RequestContextHolder.setRequestAttributes(requestAttributes);
         return () -> RequestContextHolder.setRequestAttributes(oldRequestAttributes);

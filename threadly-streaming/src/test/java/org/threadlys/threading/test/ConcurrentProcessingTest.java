@@ -81,10 +81,10 @@ import org.threadlys.threading.test.context.BeanWithThreadLocalScope;
 import org.threadlys.threading.test.context.TestService;
 import org.threadlys.threading.test.context.TestServiceImpl;
 import org.threadlys.utils.FutureUtil;
-import org.threadlys.utils.IStateRollback;
+import org.threadlys.utils.IStateRevert;
 import org.threadlys.utils.ReflectUtil;
 import org.threadlys.utils.SneakyThrowUtil;
-import org.threadlys.utils.StateRollback;
+import org.threadlys.utils.DefaultStateRevert;
 import org.threadlys.utils.configuration.CommonsUtilsSpringConfig;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.SneakyThrows;
@@ -267,7 +267,7 @@ class ConcurrentProcessingTest {
     }
 
     /**
-     * Tests that two consecutive usages of distinct snapshots work properly and also rollback properly It also shows that a thread-local scoped Spring bean behaves differently than a raw thread-local
+     * Tests that two consecutive usages of distinct snapshots work properly and also revert properly It also shows that a thread-local scoped Spring bean behaves differently than a raw thread-local
      * value here
      *
      * @throws Throwable
@@ -566,7 +566,7 @@ class ConcurrentProcessingTest {
     @Test
     void securityContext() throws Exception {
         Authentication myAuth = Mockito.mock(Authentication.class);
-        IStateRollback rollback = TransferrableSecurityContext.pushAuthentication(myAuth);
+        IStateRevert revert = TransferrableSecurityContext.pushAuthentication(myAuth);
         try {
             // 1) makes sure that all calls to fjp.currentForkJoinPool() get a valid
             // instance
@@ -582,7 +582,7 @@ class ConcurrentProcessingTest {
                 }));
             });
         } finally {
-            rollback.rollback();
+            revert.revert();
         }
     }
 
@@ -594,7 +594,7 @@ class ConcurrentProcessingTest {
     @Test
     void requestScopedBean() throws Exception {
         RequestAttributes rq = Mockito.mock(RequestAttributes.class);
-        IStateRollback rollback = TransferrableRequestContext.pushRequestAttributes(rq);
+        IStateRevert revert = TransferrableRequestContext.pushRequestAttributes(rq);
         try {
             // 1) makes sure that all calls to fjp.currentForkJoinPool() get a valid
             // instance
@@ -610,7 +610,7 @@ class ConcurrentProcessingTest {
                 }));
             });
         } finally {
-            rollback.rollback();
+            revert.revert();
         }
     }
 
@@ -618,7 +618,7 @@ class ConcurrentProcessingTest {
     void threadLocalTransferrer() {
         var value = "helloCustom";
         beanWithThreadLocalScope.setCustomValue(value);
-        IStateRollback rollback = threadLocalTransferrerExtendable.registerThreadLocalTransferrer((masterBean, forkedBean) -> {
+        IStateRevert revert = threadLocalTransferrerExtendable.registerThreadLocalTransferrer((masterBean, forkedBean) -> {
             forkedBean.setCustomValue(masterBean.getCustomValue());
         }, BeanWithThreadLocalScope.class);
         try {
@@ -637,7 +637,7 @@ class ConcurrentProcessingTest {
                 }));
             });
         } finally {
-            rollback.rollback();
+            revert.revert();
         }
     }
 
@@ -666,7 +666,7 @@ class ConcurrentProcessingTest {
         assertThat(fjpGuard.currentForkJoinPool()).isNull();
         var fjp = fjpGuard.getDefaultForkJoinPool();
         assertThat(fjpGuard.currentForkJoinPool()).isNull();
-        var rollback = fjpGuard.pushForkJoinPool(fjp);
+        var revert = fjpGuard.pushForkJoinPool(fjp);
         try {
             assertThat(fjpGuard.currentForkJoinPool()).isSameAs(fjp);
 
@@ -720,7 +720,7 @@ class ConcurrentProcessingTest {
                 throw ex.get();
             }
         } finally {
-            rollback.rollback();
+            revert.revert();
         }
     }
 
@@ -825,7 +825,7 @@ class ConcurrentProcessingTest {
         Map<Thread, Integer> csInvocations = new ConcurrentHashMap<>();
         Map<Thread, Integer> teInvocations = new ConcurrentHashMap<>();
         CountDownLatch latch = new CountDownLatch(1);
-        var rollback = StateRollback.chain(chain -> {
+        var revert = DefaultStateRevert.chain(chain -> {
             chain.append(csListenerRegistry.registerContextSnapshotLifecycleListener(new ContextSnapshotLifecycleListener() {
                 @Override
                 public void contextSnapshotApplied(ContextSnapshot contextSnapshot) {
@@ -860,7 +860,7 @@ class ConcurrentProcessingTest {
             assertThat(beanWithAsync.getInvocationCount()).hasSize(1);
             assertThat(beanWithAsync.getInvocationCount().keySet().iterator().next()).isNotEqualTo(Thread.currentThread());
         } finally {
-            rollback.rollback();
+            revert.revert();
         }
     }
 

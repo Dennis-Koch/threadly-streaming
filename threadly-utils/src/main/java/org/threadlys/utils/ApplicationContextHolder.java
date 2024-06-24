@@ -24,11 +24,11 @@ public class ApplicationContextHolder {
         }
     }
     
-    public static IStateRollback pushApplicationContext(ApplicationContext applicationContext) {
+    public static StateRevert pushApplicationContext(ApplicationContext applicationContext) {
         var oldApplicationContext = ApplicationContextHolder.getContext();
         if (oldApplicationContext == applicationContext) {
             // nothing to do
-            return StateRollback.empty();
+            return DefaultStateRevert.empty();
         }
         ApplicationContextHolder.setContext(applicationContext);
         return () -> ApplicationContextHolder.setContext(oldApplicationContext);

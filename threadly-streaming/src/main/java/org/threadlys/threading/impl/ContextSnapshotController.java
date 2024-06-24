@@ -1,16 +1,16 @@
 package org.threadlys.threading.impl;
 
-import org.threadlys.utils.IStateRollback;
+import org.threadlys.utils.IStateRevert;
 
 /**
  * Internal interface for the {@link ContextSnapshotImpl} in order to
- * apply/rollback its context to/from the current thread
+ * apply/revert its context to/from the current thread
  *
  * @author Dennis Koch (EXXETA AG)
  */
 public interface ContextSnapshotController {
 
-    IStateRollback pushContext(ContextSnapshotIntern contextSnapshot);
+    IStateRevert pushContext(ContextSnapshotIntern contextSnapshot);
 
     void popContext(ContextSnapshotIntern contextSnapshot);
 }
