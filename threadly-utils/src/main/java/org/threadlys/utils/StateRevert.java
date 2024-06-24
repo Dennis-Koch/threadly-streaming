@@ -2,7 +2,7 @@ package org.threadlys.utils;
 
 /**
  * Allows to chain apply/revert or push/pop chains of closures. Normally
- * <code>IStateReverts</code> are executed in reverse order compared to their apply counterparts
+ * <code>StateReverts</code> are executed in reverse order compared to their apply counterparts
  */
 public interface StateRevert {
     /**

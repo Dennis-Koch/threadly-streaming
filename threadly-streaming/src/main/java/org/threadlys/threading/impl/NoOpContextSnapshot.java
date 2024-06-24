@@ -16,7 +16,7 @@ import org.threadlys.streams.CheckedRunnable;
 import org.threadlys.streams.CheckedSupplier;
 import org.threadlys.threading.ContextSnapshot;
 import org.threadlys.threading.ParallelStreamFassade;
-import org.threadlys.utils.IStateRevert;
+import org.threadlys.utils.StateRevert;
 import org.threadlys.utils.SneakyThrowUtil;
 import org.threadlys.utils.DefaultStateRevert;
 
@@ -117,12 +117,12 @@ public class NoOpContextSnapshot implements ContextSnapshot {
     }
 
     @Override
-    public IStateRevert apply() {
+    public StateRevert apply() {
         return DefaultStateRevert.empty();
     }
 
     @Override
-    public IStateRevert apply(IStateRevert... reverts) {
+    public StateRevert apply(StateRevert... reverts) {
         return DefaultStateRevert.all(reverts);
     }
 

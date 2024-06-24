@@ -3,7 +3,7 @@ package org.threadlys.threading.impl;
 import java.util.Arrays;
 import java.util.List;
 
-import org.threadlys.utils.IStateRevert;
+import org.threadlys.utils.StateRevert;
 import org.threadlys.utils.ReflectUtil;
 import org.threadlys.utils.DefaultStateRevert;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class TransferrableSecurityContext implements TransferrableThreadLocalPro
         }
 
         @Override
-        public IStateRevert setForFork(Authentication newForkedValue, Authentication oldForkedValue) {
+        public StateRevert setForFork(Authentication newForkedValue, Authentication oldForkedValue) {
             SecurityContextHolder.getContext()
                     .setAuthentication(newForkedValue);
             if (oldForkedValue == null) {
@@ -45,7 +45,7 @@ public class TransferrableSecurityContext implements TransferrableThreadLocalPro
         }
     }
 
-    public static IStateRevert pushAuthentication(Authentication authentication) {
+    public static StateRevert pushAuthentication(Authentication authentication) {
         SecurityContext context = SecurityContextHolder.getContext();
         Authentication oldAuthentication = context.getAuthentication();
         if (oldAuthentication == authentication) {

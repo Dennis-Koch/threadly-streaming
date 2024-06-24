@@ -3,7 +3,7 @@ package org.threadlys.threading.impl;
 import java.util.Map;
 
 import org.threadlys.threading.ContextSnapshotFactory;
-import org.threadlys.utils.IStateRevert;
+import org.threadlys.utils.StateRevert;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class PushedContext {
     private final ContextSnapshotIntern contextSnapshot;
 
     @Getter
-    private final IStateRevert[] oldValues;
+    private final StateRevert[] oldValues;
 
     @Getter
     private final Map<String, Object> oldThreadScopeMap;

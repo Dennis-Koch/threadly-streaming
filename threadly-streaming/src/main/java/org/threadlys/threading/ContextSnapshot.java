@@ -14,7 +14,7 @@ import org.threadlys.streams.CheckedFunction;
 import org.threadlys.streams.CheckedPredicate;
 import org.threadlys.streams.CheckedRunnable;
 import org.threadlys.streams.CheckedSupplier;
-import org.threadlys.utils.IStateRevert;
+import org.threadlys.utils.StateRevert;
 
 /**
  * A handle containing a snapshot of values of thread-local fields at the moment of calling {@link ContextSnapshotFactory#createSnapshot()}.<br>
@@ -22,7 +22,7 @@ import org.threadlys.utils.IStateRevert;
  * This handle can be used either
  * <ol>
  * <li>for Java Streams API - then with the {@link #push()} and {@link #pop()} operations</li></li>or for wrapping Runnables / Callables for an {@link Executor} or {@link ForkJoinPool}</li>
- * <li>or just manually with a try/finally pattern with the {@link #apply(IStateRevert...)} operations</li>
+ * <li>or just manually with a try/finally pattern with the {@link #apply(StateRevert...)} operations</li>
  * </ol>
  * <br>
  * <br>
@@ -58,7 +58,7 @@ import org.threadlys.utils.IStateRevert;
  * }));<br>
  * </code></li>
  * <li><code>// executed any worker thread<br>
- * IStateRevert revert = cs.apply();<br>
+ * StateRevert revert = cs.apply();<br>
  * try {<br>
  * &nbsp;&nbsp;// do some calculation stuff that uses valueTL.get() from MyBean<br>
  * } finally {<br>
@@ -92,9 +92,9 @@ public interface ContextSnapshot extends ParallelStreamFassade {
      * Allows fine-grained control of when exactly and for how long a context snapshot shall be applied to the current thread. In most circumstances on of the {@link #scoped(CheckedFunction)}
      * overloads is the preferred methods as it takes automatically care about a proper try/finally structure internally for robustness against thread-local leaks.
      *
-     * @return The revert handle that allows to revert all applied changes by simply invoking {@link IStateRevert#revert()}
+     * @return The revert handle that allows to revert all applied changes by simply invoking {@link StateRevert#revert()}
      */
-    IStateRevert apply();
+    StateRevert apply();
 
     /**
      * Allows fine-grained control of when exactly and for how long a context snapshot shall be applied to the current thread. In most circumstances on of the {@link #scoped(CheckedFunction)}
@@ -102,14 +102,14 @@ public interface ContextSnapshot extends ParallelStreamFassade {
      *
      * @param reverts
      *            One or more reverts to chain in into the returned handle
-     * @return The revert handle that allows to revert all applied changes by simply invoking {@link IStateRevert#revert()}
+     * @return The revert handle that allows to revert all applied changes by simply invoking {@link StateRevert#revert()}
      */
-    IStateRevert apply(IStateRevert... reverts);
+    StateRevert apply(StateRevert... reverts);
 
     /**
      * Convenience method to apply the current snapshot for exactly the duration of the execution of the given runnable. Calling this method is equivalent to:<br>
      * <br>
-     * <code>IStateRevert revert = cs.apply();<br>
+     * <code>StateRevert revert = cs.apply();<br>
      * try {<br>
      * &nbsp;&nbsp;runnable.run();<br>
      * } finally {<br>
@@ -125,7 +125,7 @@ public interface ContextSnapshot extends ParallelStreamFassade {
     /**
      * Convenience method to apply the current snapshot for exactly the duration of the execution of the given function. Calling this method is equivalent to:<br>
      * <br>
-     * <code>IStateRevert revert = cs.apply();<br>
+     * <code>StateRevert revert = cs.apply();<br>
      * try {<br>
      * &nbsp;&nbsp;return function.apply(arg);<br>
      * } finally {<br>
@@ -143,7 +143,7 @@ public interface ContextSnapshot extends ParallelStreamFassade {
     /**
      * Convenience method to apply the current snapshot for exactly the duration of the execution of the given supplier. Calling this method is equivalent to:<br>
      * <br>
-     * <code>IStateRevert revert = cs.apply();<br>
+     * <code>StateRevert revert = cs.apply();<br>
      * try {<br>
      * &nbsp;&nbsp;return supplier.get();<br>
      * } finally {<br>
@@ -160,7 +160,7 @@ public interface ContextSnapshot extends ParallelStreamFassade {
     /**
      * Convenience method to apply the current snapshot for exactly the duration of the execution of the given callable. Calling this method is equivalent to:<br>
      * <br>
-     * <code>IStateRevert revert = cs.apply();<br>
+     * <code>StateRevert revert = cs.apply();<br>
      * try {<br>
      * &nbsp;&nbsp;return callable.call();<br>
      * } finally {<br>
@@ -177,7 +177,7 @@ public interface ContextSnapshot extends ParallelStreamFassade {
     /**
      * Convenience method to apply the current snapshot for exactly the duration of the execution of the given consumer. Calling this method is equivalent to:<br>
      * <br>
-     * <code>IStateRevert revert = cs.apply();<br>
+     * <code>StateRevert revert = cs.apply();<br>
      * try {<br>
      * &nbsp;&nbsp;consumer.accept(arg);<br>
      * } finally {<br>
@@ -194,7 +194,7 @@ public interface ContextSnapshot extends ParallelStreamFassade {
     /**
      * Convenience method to apply the current snapshot for exactly the duration of the execution of the given predicate. Calling this method is equivalent to:<br>
      * <br>
-     * <code>IStateRevert revert = cs.apply();<br>
+     * <code>StateRevert revert = cs.apply();<br>
      * try {<br>
      * &nbsp;&nbsp;predicate.accept(arg);<br>
      * } finally {<br>

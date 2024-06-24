@@ -81,7 +81,7 @@ import org.threadlys.threading.test.context.BeanWithThreadLocalScope;
 import org.threadlys.threading.test.context.TestService;
 import org.threadlys.threading.test.context.TestServiceImpl;
 import org.threadlys.utils.FutureUtil;
-import org.threadlys.utils.IStateRevert;
+import org.threadlys.utils.StateRevert;
 import org.threadlys.utils.ReflectUtil;
 import org.threadlys.utils.SneakyThrowUtil;
 import org.threadlys.utils.DefaultStateRevert;
@@ -566,7 +566,7 @@ class ConcurrentProcessingTest {
     @Test
     void securityContext() throws Exception {
         Authentication myAuth = Mockito.mock(Authentication.class);
-        IStateRevert revert = TransferrableSecurityContext.pushAuthentication(myAuth);
+        StateRevert revert = TransferrableSecurityContext.pushAuthentication(myAuth);
         try {
             // 1) makes sure that all calls to fjp.currentForkJoinPool() get a valid
             // instance
@@ -594,7 +594,7 @@ class ConcurrentProcessingTest {
     @Test
     void requestScopedBean() throws Exception {
         RequestAttributes rq = Mockito.mock(RequestAttributes.class);
-        IStateRevert revert = TransferrableRequestContext.pushRequestAttributes(rq);
+        StateRevert revert = TransferrableRequestContext.pushRequestAttributes(rq);
         try {
             // 1) makes sure that all calls to fjp.currentForkJoinPool() get a valid
             // instance
@@ -618,7 +618,7 @@ class ConcurrentProcessingTest {
     void threadLocalTransferrer() {
         var value = "helloCustom";
         beanWithThreadLocalScope.setCustomValue(value);
-        IStateRevert revert = threadLocalTransferrerExtendable.registerThreadLocalTransferrer((masterBean, forkedBean) -> {
+        StateRevert revert = threadLocalTransferrerExtendable.registerThreadLocalTransferrer((masterBean, forkedBean) -> {
             forkedBean.setCustomValue(masterBean.getCustomValue());
         }, BeanWithThreadLocalScope.class);
         try {

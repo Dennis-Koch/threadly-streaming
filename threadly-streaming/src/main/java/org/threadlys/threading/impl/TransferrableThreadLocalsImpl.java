@@ -1,7 +1,7 @@
 package org.threadlys.threading.impl;
 
 import org.threadlys.streams.CheckedFunction;
-import org.threadlys.utils.IStateRevert;
+import org.threadlys.utils.StateRevert;
 import org.springframework.stereotype.Component;
 
 import org.threadlys.threading.TransferrableThreadLocal;
@@ -30,7 +30,7 @@ public class TransferrableThreadLocalsImpl implements TransferrableThreadLocals 
         }
 
         @Override
-        public IStateRevert setForFork(T newForkedValue, T oldForkedValue) {
+        public StateRevert setForFork(T newForkedValue, T oldForkedValue) {
             if (newForkedValue == null) {
                 threadLocal.remove();
             } else {
@@ -63,7 +63,7 @@ public class TransferrableThreadLocalsImpl implements TransferrableThreadLocals 
 
         @SneakyThrows
         @Override
-        public IStateRevert setForFork(T newForkedValue, T oldForkedValue) {
+        public StateRevert setForFork(T newForkedValue, T oldForkedValue) {
             var clonedValue = valueCloner.apply(newForkedValue);
             if (clonedValue == null) {
                 threadLocal.remove();

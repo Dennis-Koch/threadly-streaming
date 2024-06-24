@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ForkJoinPool;
 
-import org.threadlys.utils.IStateRevert;
+import org.threadlys.utils.StateRevert;
 import org.threadlys.utils.ListenersListAdapter;
 import org.threadlys.utils.DefaultStateRevert;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,7 +90,7 @@ public class ForkJoinPoolTaskExecutor implements TaskExecutor, TaskExecutorListe
     }
 
     @Override
-    public IStateRevert registerTaskExecutorListener(TaskExecutorListener listener) {
+    public StateRevert registerTaskExecutorListener(TaskExecutorListener listener) {
         ListenersListAdapter.registerListener(listener, listeners);
         return () -> unregisterTaskExecutorListener(listener);
     }

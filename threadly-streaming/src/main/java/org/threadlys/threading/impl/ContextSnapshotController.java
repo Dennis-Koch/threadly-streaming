@@ -1,6 +1,6 @@
 package org.threadlys.threading.impl;
 
-import org.threadlys.utils.IStateRevert;
+import org.threadlys.utils.StateRevert;
 
 /**
  * Internal interface for the {@link ContextSnapshotImpl} in order to
@@ -10,7 +10,7 @@ import org.threadlys.utils.IStateRevert;
  */
 public interface ContextSnapshotController {
 
-    IStateRevert pushContext(ContextSnapshotIntern contextSnapshot);
+    StateRevert pushContext(ContextSnapshotIntern contextSnapshot);
 
     void popContext(ContextSnapshotIntern contextSnapshot);
 }

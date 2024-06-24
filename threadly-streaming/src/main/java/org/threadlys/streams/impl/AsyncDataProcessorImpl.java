@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 import org.threadlys.threading.ContextSnapshot;
 import org.threadlys.threading.ContextSnapshotFactory;
 import org.threadlys.threading.impl.ForkJoinPoolGuard;
-import org.threadlys.utils.IStateRevert;
+import org.threadlys.utils.StateRevert;
 import org.threadlys.utils.ListenersMapListAdapter;
 import org.threadlys.utils.SneakyThrowUtil;
 import org.threadlys.utils.DefaultStateRevert;
@@ -793,7 +793,7 @@ public class AsyncDataProcessorImpl implements AsyncDataProcessor, DataProcessor
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
-    public <E> IStateRevert registerDataProcessor(DataProcessor<E, ?> dataProcessor, Class<? extends E> entityType, DataScope dataScope) {
+    public <E> StateRevert registerDataProcessor(DataProcessor<E, ?> dataProcessor, Class<? extends E> entityType, DataScope dataScope) {
         writeLock.lock();
         try {
             ConfigurationState newState = new ConfigurationState(state);
@@ -831,7 +831,7 @@ public class AsyncDataProcessorImpl implements AsyncDataProcessor, DataProcessor
     }
 
     @Override
-    public <E> IStateRevert registerDataProcessorDependency(DataProcessor<E, ?> dataProcessor, DataScope requiredDataScope) {
+    public <E> StateRevert registerDataProcessorDependency(DataProcessor<E, ?> dataProcessor, DataScope requiredDataScope) {
         writeLock.lock();
         try {
             ConfigurationState newState = new ConfigurationState(state);
@@ -855,7 +855,7 @@ public class AsyncDataProcessorImpl implements AsyncDataProcessor, DataProcessor
     }
 
     @Override
-    public <E> IStateRevert registerDataProcessorExceptionHandler(DataProcessor<E, ?> dataProcessor, DataProcessorExceptionHandler exceptionHandler) {
+    public <E> StateRevert registerDataProcessorExceptionHandler(DataProcessor<E, ?> dataProcessor, DataProcessorExceptionHandler exceptionHandler) {
         writeLock.lock();
         try {
             ConfigurationState newState = new ConfigurationState(state);

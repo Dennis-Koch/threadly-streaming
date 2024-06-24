@@ -24,7 +24,7 @@ import org.threadlys.threading.ThreadLocalTransferrerRegistry;
 import org.threadlys.threading.Transferrable;
 import org.threadlys.threading.TransferrableThreadLocal;
 import org.threadlys.threading.TransferrableThreadLocals;
-import org.threadlys.utils.IStateRevert;
+import org.threadlys.utils.StateRevert;
 import org.threadlys.utils.ListenersListAdapter;
 import org.threadlys.utils.ReflectUtil;
 import org.threadlys.utils.SneakyThrowUtil;
@@ -43,7 +43,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ContextSnapshotControllerImpl implements ContextSnapshotFactory, ContextSnapshotLifecycleListenerExtendable, ContextSnapshotController, InitializingBean, DisposableBean {
     public static final Object[] ALL_NULL_VALUES = new Object[0];
 
-    public static final IStateRevert[] ALL_NULL_REVERTS = new IStateRevert[0];
+    public static final StateRevert[] ALL_NULL_REVERTS = new StateRevert[0];
 
     // this constant is intentionally different from the ABOVE. do not refactor this
     public static final Object[] EMPTY_VALUES = new Object[0];
@@ -213,7 +213,7 @@ public class ContextSnapshotControllerImpl implements ContextSnapshotFactory, Co
     }
 
     @Override
-    public IStateRevert pushContext(ContextSnapshotIntern cs) {
+    public StateRevert pushContext(ContextSnapshotIntern cs) {
         var thread = Thread.currentThread();
         log.debug("identity=CS{} - context snapshot APPLY  START  on thread '{}-{}': {}", System.identityHashCode(cs), thread.getId(), thread.getName(), cs);
         var threadLocals = cs.getThreadLocals();
@@ -232,7 +232,7 @@ public class ContextSnapshotControllerImpl implements ContextSnapshotFactory, Co
             }
             if (oldValueReverts == ALL_NULL_REVERTS) {
                 // once: now the full lazy instantiation of the oldValues storage
-                oldValueReverts = new IStateRevert[threadLocals.length];
+                oldValueReverts = new StateRevert[threadLocals.length];
             }
             oldValueReverts[a] = revert;
         }
@@ -294,7 +294,7 @@ public class ContextSnapshotControllerImpl implements ContextSnapshotFactory, Co
         return recentContext;
     }
 
-    protected void applyValuesToThreadLocals(IStateRevert[] oldValues, TransferrableThreadLocal<?>[] threadLocals) {
+    protected void applyValuesToThreadLocals(StateRevert[] oldValues, TransferrableThreadLocal<?>[] threadLocals) {
         if (oldValues == ALL_NULL_REVERTS) {
             return;
         }
@@ -322,7 +322,7 @@ public class ContextSnapshotControllerImpl implements ContextSnapshotFactory, Co
     }
 
     @Override
-    public IStateRevert registerContextSnapshotLifecycleListener(ContextSnapshotLifecycleListener listener) {
+    public StateRevert registerContextSnapshotLifecycleListener(ContextSnapshotLifecycleListener listener) {
         ListenersListAdapter.registerListener(listener, listeners);
         return () -> unregisterContextSnapshotLifecycleListener(listener);
     }

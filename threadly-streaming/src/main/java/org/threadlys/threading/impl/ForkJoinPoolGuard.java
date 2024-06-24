@@ -16,7 +16,7 @@ import java.util.function.Supplier;
 
 import org.threadlys.streams.CheckedRunnable;
 import org.threadlys.utils.FutureUtil;
-import org.threadlys.utils.IStateRevert;
+import org.threadlys.utils.StateRevert;
 import org.threadlys.utils.SneakyThrowUtil;
 import org.threadlys.utils.DefaultStateRevert;
 import org.springframework.beans.factory.DisposableBean;
@@ -108,7 +108,7 @@ public class ForkJoinPoolGuard implements TransferrableThreadLocalProvider, Disp
 
     private Optional<DecoratedForkJoinPool> defaultForkJoinPool = Optional.empty();
 
-    private IStateRevert defaultListenerRevert = DefaultStateRevert.empty();
+    private StateRevert defaultListenerRevert = DefaultStateRevert.empty();
 
     @Override
     public void destroy() throws Exception {
@@ -155,7 +155,7 @@ public class ForkJoinPoolGuard implements TransferrableThreadLocalProvider, Disp
                 threadlyStreamingConfiguration.getPoolSize(), threadlyStreamingConfiguration.getMaximumPoolSize(), 1, fjp -> true, 10L, TimeUnit.SECONDS);
     }
 
-    public IStateRevert pushForkJoinPool(ForkJoinPool fjp) {
+    public StateRevert pushForkJoinPool(ForkJoinPool fjp) {
         var existingFjp = forkJoinPoolTL.get();
         if (existingFjp == null && fjp == null) {
             // nothing to do
@@ -171,7 +171,7 @@ public class ForkJoinPoolGuard implements TransferrableThreadLocalProvider, Disp
         };
     }
 
-    public IStateRevert pushForkJoinPoolIfRequired() {
+    public StateRevert pushForkJoinPoolIfRequired() {
         var existingFjp = forkJoinPoolTL.get();
         if (existingFjp != null) {
             // nothing to do

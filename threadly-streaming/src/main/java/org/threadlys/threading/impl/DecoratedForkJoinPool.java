@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Predicate;
 
-import org.threadlys.utils.IStateRevert;
+import org.threadlys.utils.StateRevert;
 import org.threadlys.utils.DefaultStateRevert;
 
 import lombok.Getter;
@@ -97,7 +97,7 @@ public class DecoratedForkJoinPool extends ForkJoinPool {
         this.workerTimeout = workerTimeout;
     }
 
-    public IStateRevert registerListener(DecoratedForkJoinPoolListener listener) {
+    public StateRevert registerListener(DecoratedForkJoinPoolListener listener) {
         Objects.requireNonNull(listener, "listener must be valid");
         listeners.add(listener);
         return () -> listeners.remove(listener);
@@ -121,7 +121,7 @@ public class DecoratedForkJoinPool extends ForkJoinPool {
                 .toList();
     }
 
-    protected IStateRevert pushMonitorCurrentThread() {
+    protected StateRevert pushMonitorCurrentThread() {
         if (workerTimeout == null && listeners.isEmpty()) {
             // no monitoring at all
             return DefaultStateRevert.empty();
